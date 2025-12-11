@@ -69,9 +69,9 @@ export default function App() {
 
             <button
               onClick={() => setDark(!dark)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 dark:border "
             >
-              <span className="material-symbols-outlined text-slate-600 dark:text-slate-300">
+              <span className="material-symbols-outlined">
                 {dark ? (
                   <img src={LightMoon} alt="dark-mood"></img>
                 ) : (
