@@ -1,5 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
+import LightMoon from "./assets/lightMoon.svg";
+import DarkMoon from "./assets/moon.svg";
 
 const API_URL =
   "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
@@ -70,7 +72,11 @@ export default function App() {
               className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60"
             >
               <span className="material-symbols-outlined text-slate-600 dark:text-slate-300">
-                {dark ? "light_mode" : "dark_mode"}
+                {dark ? (
+                  <img src={LightMoon} alt="dark-mood"></img>
+                ) : (
+                  <img src={DarkMoon} alt="white-mood" />
+                )}
               </span>
             </button>
           </div>

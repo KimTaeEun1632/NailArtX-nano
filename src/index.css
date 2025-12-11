@@ -7,3 +7,5 @@
 
   --font-display: Manrope, sans-serif;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
