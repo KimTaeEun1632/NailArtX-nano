@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import LightMoon from "./assets/lightMoon.svg";
 import DarkMoon from "./assets/moon.svg";
+import LiveBackground from "./components/LiveBackground";
 
 const API_URL =
   "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
@@ -100,7 +101,10 @@ export default function App() {
                   className="w-full h-full object-cover rounded-lg"
                 />
               ) : loading ? (
-                <p>Generating...</p>
+                <>
+                  <p>Generating...</p>
+                  <LiveBackground />
+                </>
               ) : (
                 <>
                   <span className="material-symbols-outlined text-4xl text-slate-400 dark:text-slate-600">
