@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import FeaturesSection from "./components/FeaturesSection.JSX";
 import GallerySection from "./components/GallerySection.JSX";
+import HowItWorksSection from "./components/HowItWorksSection ";
 
 export default function Landing() {
   return (
@@ -100,15 +101,16 @@ export default function Landing() {
 
               {/* Hero Images */}
               <div className="lg:w-1/2 grid grid-cols-2 gap-4">
-                <img className="rounded-2xl" src="public/hero1.jpg" />
-                <img className="rounded-2xl" src="public/hero1.jpg" />
-                <img className="rounded-2xl" src="public/hero1.jpg" />
-                <img className="rounded-2xl" src="public/hero1.jpg" />
+                <img className="rounded-2xl" src="/hero1.jpg" />
+                <img className="rounded-2xl" src="/hero1.jpg" />
+                <img className="rounded-2xl" src="/hero1.jpg" />
+                <img className="rounded-2xl" src="/hero1.jpg" />
               </div>
             </div>
           </section>
 
           <FeaturesSection />
+          <HowItWorksSection />
           <GallerySection />
 
           {/* CTA */}
