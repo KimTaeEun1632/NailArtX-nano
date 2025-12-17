@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import FeaturesSection from "./components/FeaturesSection.JSX";
 import GallerySection from "./components/GallerySection.JSX";
 import HowItWorksSection from "./components/HowItWorksSection ";
-
+// ToDo: 랜딩페이지 컴포넌트 분리
 export default function Landing() {
   return (
     <div className="light font-display bg-background-light dark:bg-background-dark text-[#151118] dark:text-white overflow-x-hidden antialiased selection:bg-primary/30 selection:text-primary-dark">
