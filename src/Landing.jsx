@@ -3,6 +3,8 @@ import FeaturesSection from "./components/FeaturesSection.jsx";
 import GallerySection from "./components/GallerySection.jsx";
 import HowItWorksSection from "./components/HowItWorksSection ";
 // ToDo: 랜딩페이지 컴포넌트 분리
+// 회원가입, 로그인 기능, 갤러리 기능 추가
+
 export default function Landing() {
   return (
     <div className="light font-display bg-background-light dark:bg-background-dark text-[#151118] dark:text-white overflow-x-hidden antialiased selection:bg-primary/30 selection:text-primary-dark">
@@ -53,7 +55,7 @@ export default function Landing() {
 
         {/* Hero */}
         <main className="grow">
-          <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-purple-100 via-transparent to-transparent dark:from-purple-900/20">
+          <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-purple-700 via-transparent to-transparent dark:from-purple-900/20">
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
               <div className="flex flex-col gap-6 lg:w-1/2 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary mx-auto lg:mx-0">
@@ -100,11 +102,31 @@ export default function Landing() {
               </div>
 
               {/* Hero Images */}
-              <div className="lg:w-1/2 grid grid-cols-2 gap-4">
-                <img className="rounded-2xl" src="/hero1.jpg" />
-                <img className="rounded-2xl" src="/hero1.jpg" />
-                <img className="rounded-2xl" src="/hero1.jpg" />
-                <img className="rounded-2xl" src="/hero1.jpg" />
+              <div className="lg:w-1/2 grid grid-cols-2 gap-4 relative z-10">
+                <div className="space-y-4 pt-12">
+                  <div className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
+                    <img
+                      className="w-full h-full object-cover"
+                      src="/그라34.jpeg"
+                    />
+                  </div>
+                  <div className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
+                    <img
+                      className="w-full h-full object-cover"
+                      src="/산타11.jpeg"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <img
+                    className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]"
+                    src="/대리석11.jpeg"
+                  />
+                  <img
+                    className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]"
+                    src="/벚꽃34.jpeg"
+                  />
+                </div>
               </div>
             </div>
           </section>
