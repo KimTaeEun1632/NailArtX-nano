@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import FeaturesSection from "./components/FeaturesSection.JSX";
-import GallerySection from "./components/GallerySection.JSX";
+import FeaturesSection from "./components/FeaturesSection.jsx";
+import GallerySection from "./components/GallerySection.jsx";
 import HowItWorksSection from "./components/HowItWorksSection ";
 // ToDo: 랜딩페이지 컴포넌트 분리
 export default function Landing() {
