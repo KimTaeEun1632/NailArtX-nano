@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import LightMoon from "../assets/lightMoon.svg";
+import DarkMoon from "../assets/moon.svg";
 import BrushIcon from "../assets/icons/brush.svg?react";
-const Header = () => {
+const Header = ({ dark, setDark }) => {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
       <div className="flex items-center gap-4">
@@ -29,6 +31,19 @@ const Header = () => {
           <a href="#gallery" className="text-sm font-medium hover:text-primary">
             Gallery
           </a>
+
+          <button
+            onClick={() => setDark(!dark)}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 dark:border "
+          >
+            <span className="material-symbols-outlined">
+              {dark ? (
+                <img src={LightMoon} alt="dark-mood"></img>
+              ) : (
+                <img src={DarkMoon} alt="white-mood" />
+              )}
+            </span>
+          </button>
         </nav>
         <div className="flex gap-2">
           <Link
