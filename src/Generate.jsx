@@ -3,6 +3,7 @@ import axios from "axios";
 import LiveBackground from "./components/LiveBackground";
 import LightMoon from "./assets/lightMoon.svg";
 import DarkMoon from "./assets/moon.svg";
+import { Link } from "react-router-dom";
 
 const API_URL =
   "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
@@ -62,7 +63,9 @@ export default function Generate({ dark, setDark }) {
                   />
                 </svg>
               </div>
-              <h2 className="text-lg font-bold">NailArtX</h2>
+              <Link to="/" className="text-lg font-bold">
+                NailArtX
+              </Link>
             </div>
 
             <button

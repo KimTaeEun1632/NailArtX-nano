@@ -21,15 +21,9 @@ export default function HowItWorksSection() {
             </p>
           </div>
 
-          <a
-            href="/generate"
-            className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all"
-          >
+          <p className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
             Start Tutorial
-            <span className="material-symbols-outlined text-sm">
-              arrow_forward
-            </span>
-          </a>
+          </p>
         </div>
 
         {/* Steps */}

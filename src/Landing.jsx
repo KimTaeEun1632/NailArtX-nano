@@ -2,20 +2,23 @@ import { Link } from "react-router-dom";
 import FeaturesSection from "./components/FeaturesSection.jsx";
 import GallerySection from "./components/GallerySection.jsx";
 import HowItWorksSection from "./components/HowItWorksSection ";
+import BrushIcon from "./assets/icons/brush.svg?react";
 // ToDo: 랜딩페이지 컴포넌트 분리
 // 회원가입, 로그인 기능, 갤러리 기능 추가
 
 export default function Landing() {
   return (
-    <div className="light font-display bg-background-light dark:bg-background-dark text-[#151118] dark:text-white overflow-x-hidden antialiased selection:bg-primary/30 selection:text-primary-dark">
+    <div className="light font-display bg-background-light dark:bg-background-dark text-[#151118] dark:text-white antialiased selection:bg-primary/30 selection:text-primary-dark">
       <div className="relative flex min-h-screen w-full flex-col">
         {/* Header */}
         <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
           <div className="flex items-center gap-4">
-            <div className="size-8 flex items-center justify-center bg-primary/10 rounded-lg text-primary">
-              <span className="material-symbols-outlined">brush</span>
+            <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
+              <BrushIcon />
             </div>
-            <h2 className="text-xl font-bold">NailAI</h2>
+            <a href="/" className="text-xl font-bold">
+              NailArtX
+            </a>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
@@ -46,16 +49,13 @@ export default function Landing() {
               >
                 Start Designing
               </Link>
-              <button className="flex items-center justify-center h-10 px-4 rounded-xl bg-[#f3f0f4] dark:bg-white/10 font-bold">
-                Log In
-              </button>
             </div>
           </div>
         </header>
 
         {/* Hero */}
         <main className="grow">
-          <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-purple-700 via-transparent to-transparent dark:from-purple-900/20">
+          <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-radial-[at_100%_10%] from-purple-200 via-transparent to-transparent)  dark:from-purple-900/20">
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
               <div className="flex flex-col gap-6 lg:w-1/2 text-center lg:text-left">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary mx-auto lg:mx-0">
