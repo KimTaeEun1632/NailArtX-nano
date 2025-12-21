@@ -4,7 +4,7 @@ export default function GallerySection() {
   return (
     <section
       id="gallery"
-      className="px-6 py-20 lg:px-20 bg-white dark:bg-surface-dark/50 overflow-hidden"
+      className="px-6 py-20 lg:px-20 bg-white dark:bg-[#121212] overflow-hidden"
     >
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-10">

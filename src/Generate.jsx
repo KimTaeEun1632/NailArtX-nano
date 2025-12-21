@@ -45,7 +45,7 @@ export default function Generate() {
   }
 
   return (
-    <div className="font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex flex-col items-center">
+    <div className="font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-white min-h-screen flex flex-col items-center">
       {/* Main */}
       <main className="flex w-full max-w-4xl flex-1 flex-col items-center px-4 py-8 sm:py-12">
         <h1 className="text-3xl md:text-4xl font-bold text-center">

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
-    <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-radial-[at_100%_10%] from-purple-200 via-transparent to-transparent)  dark:from-purple-900/20">
+    <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-radial-[at_100%_10%] from-purple-200 via-transparent to-transparent)  dark:from-purple-900">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
         <div className="flex flex-col gap-6 lg:w-1/2 text-center lg:text-left">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary mx-auto lg:mx-0">

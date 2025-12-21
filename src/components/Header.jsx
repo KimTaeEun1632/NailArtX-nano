@@ -4,7 +4,7 @@ import DarkMoon from "../assets/moon.svg";
 import BrushIcon from "../assets/icons/brush.svg?react";
 const Header = ({ dark, setDark }) => {
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
+    <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] dark:text-white bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
       <div className="flex items-center gap-4">
         <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
           <BrushIcon />

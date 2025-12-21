@@ -4,7 +4,7 @@ export default function FeaturesSection() {
   return (
     <section
       id="features"
-      className="px-6 py-20 lg:px-20 bg-white dark:bg-surface-dark/50"
+      className="px-6 py-20 lg:px-20 bg-white dark:bg-[#121212]"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -25,8 +25,8 @@ export default function FeaturesSection() {
               key={title}
               className="
                 group flex flex-col gap-5 p-8 rounded-2xl
-                bg-background-light dark:bg-surface-dark
-                border border-[#f3f0f4] dark:border-gray-800
+                bg-background-light dark:bg-[#121212]
+                border border-[#f3f0f4] dark:border-gray-600
                 hover:border-primary/30
                 transition-all
               "
