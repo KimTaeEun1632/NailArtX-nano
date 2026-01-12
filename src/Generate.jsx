@@ -8,19 +8,48 @@ import { Link } from "react-router-dom";
 const API_URL =
   "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
 
+// 난이도별 프롬프트 템플릿
+const PROMPT_TEMPLATES = {
+  beginner: `
+A realistic, high-resolution close-up macro shot of five artificial nails, suitable for beginner or self nail art. The nail designs are based on the theme: [KEYWORD]. The set may include repeated or similar designs across multiple nails, allowing simple pattern structures. Each nail features easy-to-recreate styles with minimal details, such as solid colors, basic glitter, simple lines, or soft gradients. The lighting is natural and soft, clearly showing the nails without dramatic effects. The background is clean and neutral to keep the focus on practical, achievable nail art. Realistic photography style.
+  `.trim(),
+
+  salon: `
+A high-quality, realistic close-up macro shot of five artificial nails designed for professional salon use. The nail art is inspired by the theme: [KEYWORD]. The set can include a mix of repeated and varied designs, forming natural salon-style patterns rather than strictly unique designs. Each nail displays clean, trendy, and client-ready nail art using moderate techniques such as subtle chrome accents, glitter, ombre, or simple 3D elements. Studio lighting highlights neat finishes and glossy top coats. The background is modern and minimal, suitable for a nail salon portfolio.
+  `.trim(),
+
+  advanced: `
+A hyper-realistic, high-resolution close-up macro shot of five artificial nails created by a professional nail artist. The designs are centered around the theme: [KEYWORD]. The nail set may include both repeated and varied designs, allowing artistic pattern compositions across the five nails. Each nail showcases complex, detailed, and fashionable nail art using advanced techniques such as chrome powder, layered 3D gel, glitter, and refined ombre effects. Studio-quality cinematic lighting emphasizes texture, depth, and glossy reflections. The background is a clean, modern aesthetic (such as marble or soft beige) to highlight artistic expression. Photorealistic, 8k quality.
+  `.trim(),
+};
 export default function Generate() {
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
+  const [difficulty, setDifficulty] = useState(null);
+
+  const isGenerateDisabled = !difficulty || !keyword.trim() || loading;
 
   async function generate() {
+    if (!difficulty) {
+      alert("난이도를 선택해주세요!");
+      return;
+    }
+    if (!keyword.trim()) {
+      alert("키워드를 입력해주세요!");
+      return;
+    }
+
     try {
       setLoading(true);
       setImg(null);
 
+      const basePrompt = PROMPT_TEMPLATES[difficulty];
+      const fullPrompt = basePrompt.replace("[KEYWORD]", keyword.trim());
+
       const response = await axios.post(
         API_URL,
-        { keyword },
+        { fullPrompt },
         { responseType: "arraybuffer", transformResponse: [] }
       );
 
@@ -54,6 +83,46 @@ export default function Generate() {
         <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
           Describe your vision, and the AI will create a stunning nail design.
         </p>
+
+        <p className="mt-2 text-center text-slate-600 dark:text-slate-400">
+          Please select a difficulty level!!
+        </p>
+
+        {/* 난이도 선택 버튼 */}
+        <div className="mt-6 flex flex-wrap justify-center gap-3 sm:gap-4">
+          <button
+            onClick={() => setDifficulty("beginner")}
+            className={`px-5 py-2.5 rounded-full font-medium transition-all ${
+              difficulty === "beginner"
+                ? "bg-yellow-500 text-white shadow-lg scale-105"
+                : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+            }`}
+          >
+            ⭐ Beginner / 셀프네일
+          </button>
+
+          <button
+            onClick={() => setDifficulty("salon")}
+            className={`px-5 py-2.5 rounded-full font-medium transition-all ${
+              difficulty === "salon"
+                ? "bg-blue-500 text-white shadow-lg scale-105"
+                : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+            }`}
+          >
+            ⭐⭐ Salon-ready / 실무 네일샵용
+          </button>
+
+          <button
+            onClick={() => setDifficulty("advanced")}
+            className={`px-5 py-2.5 rounded-full font-medium transition-all ${
+              difficulty === "advanced"
+                ? "bg-purple-600 text-white shadow-lg scale-105"
+                : "bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600"
+            }`}
+          >
+            ⭐⭐⭐ Advanced / 아트·포트폴리오용
+          </button>
+        </div>
 
         {/* Image Box */}
         <div className="mt-8 w-full">
@@ -103,6 +172,7 @@ export default function Generate() {
             <div className="lg:self-end">
               <button
                 onClick={generate}
+                disabled={isGenerateDisabled}
                 className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90"
               >
                 <span className="material-symbols-outlined">Auto awesome</span>
