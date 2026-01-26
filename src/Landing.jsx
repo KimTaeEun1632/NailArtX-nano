@@ -3,11 +3,12 @@ import GallerySection from "./components/GallerySection.jsx";
 import HowItWorksSection from "./components/HowItWorksSection ";
 import HeroSection from "./components/HeroSection.jsx";
 import CTASection from "./components/CTASection.jsx";
-// ToDo: 랜딩페이지 컴포넌트 분리
+// ToDo
 // 회원가입, 로그인 기능, 갤러리 기능 추가
 
-// 사용자 피드백 : 생성된 이미지가 너무 고퀄리티라는 피드백.
-// 난이도 별로 1. 초보자용, 2. 실무 네일샵용, 3. 전무가(아트, 포트폴리오용)로 구분 버튼 추가.
+// 색, 팁 길이, 팁 모양 등 버튼을 추가하여 세밀한 작업할 수 있도록 Technical button 추가
+// Generate.jsx → 상태 + API
+// 하위 컴포넌트 → UI + 이벤트 전달
 
 export default function Landing() {
   return (
