@@ -1,4 +1,3 @@
-// nailSpec.js
 export const NAIL_SPEC = {
   lengths: {
     short: { label: "숏", mm: "0~2mm" },

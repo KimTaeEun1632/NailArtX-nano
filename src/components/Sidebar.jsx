@@ -3,6 +3,7 @@ import GenerateButton from "./buttons/GenerateButton";
 import LevelSelector from "./LevelSelector ";
 import Technical from "../assets/icons/technical.svg?react";
 import ShapeLengthSelector from "./ShapeLengthSelector";
+import ArtStyleSelector from "./ArtStyleSelector";
 
 const Sidebar = ({
   keyword,
@@ -15,6 +16,8 @@ const Sidebar = ({
   setShape,
   length,
   setLength,
+  styles,
+  setStyles,
 }) => {
   const isGenerateDisabled = !level || !keyword.trim() || loading;
 
@@ -92,36 +95,7 @@ const Sidebar = ({
           setLength={setLength}
         />
 
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">
-            Physical Decorations
-          </h3>
-          <div className="space-y-2">
-            <label className="flex items-center justify-between cursor-pointer group p-1">
-              <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">
-                  diamond
-                </span>
-                Stones &amp; Jewels
-              </span>
-              <input
-                checked=""
-                class="w-4 h-4 rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-700 dark:bg-slate-800 transition-all"
-                type="checkbox"
-              />
-            </label>
-            <label className="flex items-center justify-between cursor-pointer group p-1">
-              <span className="text-[12px] font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">flare</span>
-                Chrome Effect
-              </span>
-              <input
-                className="w-4 h-4 rounded text-primary focus:ring-primary border-slate-300 dark:border-slate-700 dark:bg-slate-800 transition-all"
-                type="checkbox"
-              />
-            </label>
-          </div>
-        </div>
+        <ArtStyleSelector styles={styles} setStyles={setStyles} />
       </div>
 
       {/* Level */}
