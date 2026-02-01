@@ -1,8 +1,8 @@
 import { ART_STYLES } from "../constants/artStyles";
 
-const ArtStyleSelector = ({ styles, setStyles }) => {
+const ArtStyleSelector = ({ artStyles, setArtStyles }) => {
   const toggleStyle = (key) => {
-    setStyles((prev) =>
+    setArtStyles((prev) =>
       prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key],
     );
   };
@@ -15,7 +15,7 @@ const ArtStyleSelector = ({ styles, setStyles }) => {
 
       <div className="flex flex-wrap gap-2">
         {Object.entries(ART_STYLES).map(([key, s]) => {
-          const active = styles?.includes(key);
+          const active = artStyles?.includes(key);
 
           return (
             <button
@@ -33,7 +33,7 @@ const ArtStyleSelector = ({ styles, setStyles }) => {
           );
         })}
       </div>
-      {styles.length >= 4 && (
+      {artStyles.length >= 4 && (
         <p className="mt-2 text-[10px] text-amber-600 dark:text-amber-400">
           너무 많은 스타일을 선택하면 디자인이 복잡해질 수 있어요!
         </p>

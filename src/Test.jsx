@@ -15,11 +15,10 @@ export default function Generate() {
   const [level, setLevel] = useState(null);
   const [shape, setShape] = useState(null);
   const [length, setLength] = useState(null);
-  const [styles, setStyles] = useState([]);
+  const [artStyles, setArtStyles] = useState([]);
+  const [selectedQuickStyles, setSelectedQuickStyles] = useState([]);
 
-  console.log("쉐입:", shape);
-  console.log("길이:", length);
-  console.log("스타일:", styles);
+  console.log("스타일:", selectedQuickStyles);
   // const isGenerateDisabled = !level || !keyword.trim() || loading;
 
   async function generate() {
@@ -67,8 +66,10 @@ export default function Generate() {
           setShape={setShape}
           length={length}
           setLength={setLength}
-          styles={styles}
-          setStyles={setStyles}
+          artStyles={artStyles}
+          setArtStyles={setArtStyles}
+          selectedQuickStyles={selectedQuickStyles}
+          setSelectedQuickStyles={setSelectedQuickStyles}
         />
       }
       canvas={<ImageCanvas img={img} loading={loading} />}

@@ -4,6 +4,7 @@ import LevelSelector from "./LevelSelector ";
 import Technical from "../assets/icons/technical.svg?react";
 import ShapeLengthSelector from "./ShapeLengthSelector";
 import ArtStyleSelector from "./ArtStyleSelector";
+import QuickStyleSelector from "./QuickStyleSelector";
 
 const Sidebar = ({
   keyword,
@@ -16,8 +17,10 @@ const Sidebar = ({
   setShape,
   length,
   setLength,
-  styles,
-  setStyles,
+  artStyles,
+  setArtStyles,
+  selectedQuickStyles,
+  setSelectedQuickStyles,
 }) => {
   const isGenerateDisabled = !level || !keyword.trim() || loading;
 
@@ -38,20 +41,11 @@ const Sidebar = ({
             onChange={(e) => setKeyword(e.target.value)}
           />
           <div className="space-y-3">
-            <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[10px] text-slate-400 uppercase font-bold w-full mb-1">
-                Styles
-              </span>
-              <button className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary text-[11px] font-semibold transition-all border border-transparent hover:border-primary/20">
-                + Minimal
-              </button>
-              <button className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary text-[11px] font-semibold transition-all border border-transparent hover:border-primary/20">
-                + Cyberpunk
-              </button>
-              <button className="px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 hover:text-primary text-[11px] font-semibold transition-all border border-transparent hover:border-primary/20">
-                + Ethereal
-              </button>
-            </div>
+            <QuickStyleSelector
+              selectedQuickStyles={selectedQuickStyles}
+              setSelectedQuickStyles={setSelectedQuickStyles}
+            />
+
             <div className="flex flex-wrap gap-1.5 items-center">
               <span className="text-[10px] text-slate-400 uppercase font-bold w-full mb-1">
                 Colors
@@ -95,7 +89,7 @@ const Sidebar = ({
           setLength={setLength}
         />
 
-        <ArtStyleSelector styles={styles} setStyles={setStyles} />
+        <ArtStyleSelector artStyles={artStyles} setArtStyles={setArtStyles} />
       </div>
 
       {/* Level */}
