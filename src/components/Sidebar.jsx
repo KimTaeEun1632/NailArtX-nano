@@ -1,10 +1,10 @@
-import React from "react";
 import GenerateButton from "./buttons/GenerateButton";
 import LevelSelector from "./LevelSelector ";
 import Technical from "../assets/icons/technical.svg?react";
 import ShapeLengthSelector from "./ShapeLengthSelector";
 import ArtStyleSelector from "./ArtStyleSelector";
 import QuickStyleSelector from "./QuickStyleSelector";
+import ColorSelector from "./ColorSelector";
 
 const Sidebar = ({
   keyword,
@@ -21,6 +21,8 @@ const Sidebar = ({
   setArtStyles,
   selectedQuickStyles,
   setSelectedQuickStyles,
+  selectedTrendColors,
+  setSelectedTrendColors,
 }) => {
   const isGenerateDisabled = !level || !keyword.trim() || loading;
 
@@ -40,35 +42,18 @@ const Sidebar = ({
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
           />
-          <div className="space-y-3">
+          <div className="space-y-5">
+            {/* QuickStyle */}
             <QuickStyleSelector
               selectedQuickStyles={selectedQuickStyles}
               setSelectedQuickStyles={setSelectedQuickStyles}
             />
 
-            <div className="flex flex-wrap gap-1.5 items-center">
-              <span className="text-[10px] text-slate-400 uppercase font-bold w-full mb-1">
-                Colors
-              </span>
-              <button className="group flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FFE4E1]"></span>
-                <span className="text-[11px] font-semibold group-hover:text-primary">
-                  Nude
-                </span>
-              </button>
-              <button className="group flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#f3e5f5]"></span>
-                <span className="text-[11px] font-semibold group-hover:text-primary">
-                  Lavender
-                </span>
-              </button>
-              <button className="group flex items-center gap-1.5 px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-primary/10 transition-all border border-transparent hover:border-primary/20">
-                <span className="w-2.5 h-2.5 rounded-full bg-linear-to-tr from-purple-400 to-pink-400"></span>
-                <span className="text-[11px] font-semibold group-hover:text-primary">
-                  Hologram
-                </span>
-              </button>
-            </div>
+            {/* TrendColor */}
+            <ColorSelector
+              selectedTrendColors={selectedTrendColors}
+              setSelectedTrendColors={setSelectedTrendColors}
+            />
           </div>
         </div>
       </div>
@@ -81,6 +66,7 @@ const Sidebar = ({
             Technical Specs
           </h2>
         </div>
+
         {/* Shape, Length */}
         <ShapeLengthSelector
           shape={shape}
@@ -89,6 +75,7 @@ const Sidebar = ({
           setLength={setLength}
         />
 
+        {/* ArtStyle */}
         <ArtStyleSelector artStyles={artStyles} setArtStyles={setArtStyles} />
       </div>
 

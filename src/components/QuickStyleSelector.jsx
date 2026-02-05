@@ -1,5 +1,6 @@
-import { QUICK_STYLE_MAP } from "../constants/quickStyleMap";
 // TODO: conflicts 필터 작동 확인, 사용자 피드백 필요
+
+import { QUICK_STYLE_MAP } from "../constants/quickStyleMap";
 
 const QuickStyleSelector = ({
   selectedQuickStyles,
@@ -30,8 +31,8 @@ const QuickStyleSelector = ({
   };
 
   return (
-    <div className="space-y-2">
-      <span className="text-[10px] text-slate-400 uppercase font-bold">
+    <div className="space-y-4">
+      <span className="text-[12px] text-slate-400 uppercase font-bold">
         Quick Styles
       </span>
 

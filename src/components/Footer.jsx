@@ -2,7 +2,7 @@ import React from "react";
 import BrushIcon from "../assets/icons/brush.svg?react";
 const Footer = () => {
   return (
-    <footer className="border-t border-[#f3f0f4] dark:border-gray-800 px-6 py-12 lg:px-20d dark:bg-[#121212]">
+    <footer className="border-t border-[#f3f0f4] dark:border-gray-800 px-6 py-3 lg:px-20d dark:bg-[#121212]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-3 font-bold">
           <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">

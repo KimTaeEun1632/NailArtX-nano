@@ -30,5 +30,11 @@ export const NAIL_SPEC = {
       recommended: "long",
       min: "long",
     },
+    round: {
+      label: "라운드",
+      allowed: ["short", "medium"],
+      recommended: "medium",
+      min: "medium",
+    },
   },
 };

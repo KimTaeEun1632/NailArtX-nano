@@ -2,8 +2,8 @@ import React from "react";
 
 const LevelSelector = ({ level, setLevel }) => {
   return (
-    <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border">
-      <h3 className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">
+    <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
         Difficulty Level
       </h3>
       <div className="flex gap-2">
