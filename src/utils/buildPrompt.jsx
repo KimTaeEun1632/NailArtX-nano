@@ -36,9 +36,6 @@ Photorealistic, 8k quality.
 `,
 };
 
-/* -----------------------------
-buildPrompt
------------------------------- */
 export function buildPrompt({
   keyword,
   level,
@@ -50,10 +47,9 @@ export function buildPrompt({
 }) {
   if (!keyword || !level) return "";
 
-  /* 1️⃣ Base (Level) Prompt */
   let prompt = LEVEL_PROMPT_MAP[level].replace("{{KEYWORD}}", keyword);
 
-  /* 2️⃣ Quick Style (Mood / Vibe) */
+  /* Quick Style */
   if (selectedQuickStyles.length > 0) {
     const quickStylePrompt = selectedQuickStyles
       .map((id) => QUICK_STYLE_MAP[id]?.prompt)
@@ -63,7 +59,7 @@ export function buildPrompt({
     prompt += `\n\nOverall style direction: ${quickStylePrompt}.`;
   }
 
-  /* 3️⃣ Trend Colors */
+  /* Trend Colors */
   if (selectedTrendColors.length > 0) {
     const colorPrompt = selectedTrendColors
       .map((id) => TREND_COLOR_MAP[id]?.prompt)
@@ -73,7 +69,7 @@ export function buildPrompt({
     prompt += `\n\nColor palette focus: ${colorPrompt}.`;
   }
 
-  /* 4️⃣ Shape / Length */
+  /* Shape / Length */
   if (shape || length) {
     const shapeParts = [];
     if (shape) shapeParts.push(shape);
@@ -82,7 +78,7 @@ export function buildPrompt({
     prompt += `\n\nNail shape and length: ${shapeParts.join(", ")}.`;
   }
 
-  /* 5️⃣ Art Styles (Techniques) */
+  /* Art Styles (Techniques) */
   if (artStyles.length > 0) {
     const artStylePrompt = artStyles
       .map((key) => ART_STYLES[key]?.prompt)
@@ -92,7 +88,7 @@ export function buildPrompt({
     prompt += `\n\nIncorporate the following nail art techniques: ${artStylePrompt}.`;
   }
 
-  /* 6️⃣ Final Quality Guard */
+  /* Final Quality Guard */
   prompt += `
 Ensure the final result looks cohesive, aesthetically balanced, and suitable for the selected difficulty level.
 Avoid overloading the design; maintain harmony between colors, techniques, and overall mood.
