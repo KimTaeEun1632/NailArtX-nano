@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
 import GeneratorLayout from "./components/layout/GeneratorLayout";
-import ImageCanvas from "./components/canvas/ImageCanvas";
 import Sidebar from "./components/Sidebar";
 import { buildPrompt } from "./utils/buildPrompt";
+import MainPanel from "./components/MainPanel";
 
 const API_URL =
   "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
@@ -18,9 +18,7 @@ export default function Generate() {
   const [artStyles, setArtStyles] = useState([]);
   const [selectedQuickStyles, setSelectedQuickStyles] = useState([]);
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
-
-  console.log("스타일:", selectedQuickStyles);
-  // const isGenerateDisabled = !level || !keyword.trim() || loading;
+  const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
 
   async function generate() {
     try {
@@ -66,14 +64,12 @@ export default function Generate() {
 
   return (
     <GeneratorLayout
+      isSidebarOpen={isSidebarOpen}
+      setIsSidebarOpen={setIsSidebarOpen}
       sidebar={
         <Sidebar
-          keyword={keyword}
-          setKeyword={setKeyword}
           level={level}
           setLevel={setLevel}
-          onGenerate={generate}
-          loading={loading}
           shape={shape}
           setShape={setShape}
           length={length}
@@ -84,9 +80,20 @@ export default function Generate() {
           setSelectedQuickStyles={setSelectedQuickStyles}
           selectedTrendColors={selectedTrendColors}
           setSelectedTrendColors={setSelectedTrendColors}
+          isSidebarOpen={isSidebarOpen}
         />
       }
-      canvas={<ImageCanvas img={img} loading={loading} />}
+      main={
+        <MainPanel
+          img={img}
+          loading={loading}
+          keyword={keyword}
+          setKeyword={setKeyword}
+          onGenerate={generate}
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+        />
+      }
     />
   );
 }

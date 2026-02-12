@@ -1,5 +1,3 @@
-// TODO: conflicts 필터 작동 확인, 사용자 피드백 필요
-
 import { QUICK_STYLE_MAP } from "../constants/quickStyleMap";
 
 const QuickStyleSelector = ({

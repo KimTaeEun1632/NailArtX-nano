@@ -1,15 +1,15 @@
 const ImageCanvas = ({ img, loading }) => {
   return (
-    <div className="lg:col-span-8 xl:col-span-9 h-full relative">
+    <div className="w-full h-full relative">
       <div
         className="h-full bg-white dark:bg-slate-900 rounded-[2.5rem]
-        border shadow-2xl overflow-hidden"
+        border overflow-hidden"
       >
         <div
-          className="flex items-center justify-center h-full p-12
+          className="flex items-center justify-center h-full
           bg-slate-50 dark:bg-slate-950/50"
         >
-          {loading && <p className="animate-pulse">Generating…</p>}
+          {loading && <p className="animate-pulse text-3xl">Generating…</p>}
 
           {!loading && img && (
             <img src={img} className="object-contain h-full w-full" />

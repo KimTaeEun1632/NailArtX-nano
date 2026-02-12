@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 const CTASection = () => {
@@ -19,9 +18,6 @@ const CTASection = () => {
             >
               Start Designing Free
             </Link>
-            {/* <button className="h-14 px-8 rounded-xl bg-white/10 border border-white/20">
-                    View Pricing
-                  </button> */}
           </div>
         </div>
       </div>
