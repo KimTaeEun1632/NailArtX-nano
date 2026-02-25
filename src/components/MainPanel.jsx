@@ -17,7 +17,7 @@ const MainPanel = ({
       <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm z-30"
+          className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-surface-light-dark transition-all shadow-sm z-30"
         >
           <SideToggle className="w-7 h-7" />
         </button>

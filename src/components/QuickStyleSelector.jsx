@@ -46,7 +46,7 @@ const QuickStyleSelector = ({
                 ${
                   active
                     ? "bg-primary text-white shadow-sm"
-                    : "bg-slate-100 dark:bg-slate-800 hover:bg-primary/10"
+                    : "bg-slate-100 dark:bg-surface-light-dark hover:bg-primary/10"
                 }`}
             >
               {s.emoji} {s.label}

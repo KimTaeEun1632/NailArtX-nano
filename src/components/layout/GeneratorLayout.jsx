@@ -5,7 +5,7 @@ const GeneratorLayout = ({
   setIsSidebarOpen,
 }) => {
   return (
-    <main className="relative max-w-[1800px] mx-auto px-4 lg:px-6 py-6 h-[calc(100vh-64px)] overflow-hidden">
+    <main className="relative max-w-[1800px] mx-auto px-4 lg:px-6 py-6 h-[calc(100vh-64px)] overflow-hidden bg-white dark:bg-background-dark text-[#151118] dark:text-white transition-colors duration-300">
       <div className="flex gap-0 lg:gap-6 h-full w-full">
         {isSidebarOpen && (
           <div
@@ -19,7 +19,7 @@ const GeneratorLayout = ({
             h-full transition-all duration-300 ease-in-out z-50
             
             /* 모바일/태블릿: 오버레이 방식 */
-            fixed inset-y-0 left-0 bg-white dark:bg-slate-900 shadow-2xl p-6
+            fixed inset-y-0 left-0 bg-white dark:bg-surface-dark shadow-2xl p-6
             lg:relative lg:bg-transparent lg:shadow-none lg:p-0
             
             /* 열림/닫힘 상태 제어 */

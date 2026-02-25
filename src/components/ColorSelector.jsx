@@ -43,7 +43,7 @@ const ColorSelector = ({ selectedTrendColors, setSelectedTrendColors }) => {
                 ${
                   active
                     ? "bg-primary text-white"
-                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-primary/10"
+                    : "bg-slate-100 dark:bg-surface-light-dark text-slate-500 hover:bg-primary/10"
                 }`}
             >
               <span>{c.emoji}</span>

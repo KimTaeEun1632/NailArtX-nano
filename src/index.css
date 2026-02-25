@@ -3,12 +3,21 @@
 @theme {
   --color-primary: #b447eb;
   --color-background-light: #f7f6f8;
-  --color-background-dark: #1c1121;
+  --color-background-dark: #140a18;
+  --color-surface-dark: #1c1121;
+  --color-surface-light-dark: #2a1b2e;
+  --color-muted-dark: #8a7d91;
 
   --font-display: Manrope, sans-serif;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-background-light dark:bg-background-dark text-[#151118] dark:text-white transition-colors duration-300;
+  }
+}
 
 @layer components {
   .custom-circle {

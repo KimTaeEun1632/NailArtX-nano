@@ -2,7 +2,7 @@ const PromptBox = ({ keyword, setKeyword, onGenerate, loading }) => {
   const isGenerateDisabled = !keyword.trim() || loading;
 
   return (
-    <div className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-4 sm:p-6">
+    <div className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark/50 p-4 sm:p-6">
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         {/* Text Input */}
         <div className="lg:col-span-3">
@@ -22,9 +22,10 @@ const PromptBox = ({ keyword, setKeyword, onGenerate, loading }) => {
         {/* Generate Button */}
         <div className="lg:self-end">
           <button
+            type="button"
             onClick={onGenerate}
             disabled={isGenerateDisabled}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90"
+            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <span className="material-symbols-outlined">Auto awesome</span>
             Generate

@@ -45,9 +45,9 @@ export function buildPrompt({
   shape,
   length,
 }) {
-  if (!keyword || !level) return "";
+  if (!keyword) return "";
 
-  let prompt = LEVEL_PROMPT_MAP[level].replace("{{KEYWORD}}", keyword);
+  let prompt = LEVEL_PROMPT_MAP[level || "salon"].replace("{{KEYWORD}}", keyword);
 
   /* Quick Style */
   if (selectedQuickStyles.length > 0) {

@@ -2,7 +2,7 @@ import React from "react";
 
 const LevelSelector = ({ level, setLevel }) => {
   return (
-    <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+    <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
         Difficulty Level
       </h3>

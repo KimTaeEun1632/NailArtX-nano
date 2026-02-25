@@ -16,7 +16,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
   return (
     <>
       {/* Nail Shape */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
           Nail Shape
         </h3>
@@ -47,7 +47,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
 
       {/* Nail Length */}
       {shape && (
-        <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+        <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
             Nail Length
           </h3>
