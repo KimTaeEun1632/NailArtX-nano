@@ -1,6 +1,6 @@
 import FeaturesSection from "./components/FeaturesSection.jsx";
 import GallerySection from "./components/GallerySection.jsx";
-import HowItWorksSection from "./components/HowItWorksSection ";
+import HowItWorksSection from "./components/HowItWorksSection";
 import HeroSection from "./components/HeroSection.jsx";
 import CTASection from "./components/CTASection.jsx";
 // ToDo

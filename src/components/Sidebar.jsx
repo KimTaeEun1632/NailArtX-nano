@@ -1,4 +1,4 @@
-import LevelSelector from "./LevelSelector ";
+import LevelSelector from "./LevelSelector";
 import Technical from "../assets/icons/technical.svg?react";
 import ShapeLengthSelector from "./ShapeLengthSelector";
 import ArtStyleSelector from "./ArtStyleSelector";

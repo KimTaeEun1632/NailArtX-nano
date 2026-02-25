@@ -88,10 +88,11 @@ export function buildPrompt({
     prompt += `\n\nIncorporate the following nail art techniques: ${artStylePrompt}.`;
   }
 
-  /* Final Quality Guard */
+  /* Final Quality Guard & Safety */
   prompt += `
 Ensure the final result looks cohesive, aesthetically balanced, and suitable for the selected difficulty level.
 Avoid overloading the design; maintain harmony between colors, techniques, and overall mood.
+Strictly avoid any inappropriate, offensive, or NSFW content. Generate only clean, professional-quality nail art designs.
 `;
 
   return prompt.trim();

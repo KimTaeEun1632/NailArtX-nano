@@ -16,7 +16,13 @@ const Footer = () => {
           <a>Support</a>
           <a>Instagram</a>
         </div>
-        <div className="text-sm text-gray-500">© 2024 NailAI Inc.</div>
+        <div className="flex flex-col items-center md:items-end gap-2 text-right">
+          <p className="text-[10px] text-gray-400 max-w-[300px] leading-tight">
+            NailArtX is a digital design reference tool. We do not provide
+            physical products or professional nail salon services.
+          </p>
+          <div className="text-sm text-gray-500">© 2024 NailArtX Inc.</div>
+        </div>
       </div>
     </footer>
   );
