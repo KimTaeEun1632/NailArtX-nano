@@ -5,8 +5,7 @@ import Sidebar from "./components/Sidebar";
 import { buildPrompt } from "./utils/buildPrompt";
 import MainPanel from "./components/MainPanel";
 
-const API_URL =
-  "https://nail-art-api-308254581496.asia-northeast3.run.app/generate";
+const API_URL = "/api/generate";
 
 export default function Generate() {
   const [keyword, setKeyword] = useState("");
@@ -55,6 +54,10 @@ export default function Generate() {
 
       setImg(dataUrl);
     } catch (err) {
+      if (err.response?.data instanceof ArrayBuffer) {
+        const text = new TextDecoder().decode(err.response.data);
+        console.error("에러 내용:", text);
+      }
       console.error(err);
       alert("이미지 생성 실패");
     } finally {
