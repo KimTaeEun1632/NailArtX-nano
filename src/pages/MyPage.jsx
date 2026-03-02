@@ -7,6 +7,7 @@ const MyPage = () => {
   const [loading, setLoading] = useState(true);
   const [newPassword, setNewPassword] = useState("");
   const [updating, setUpdating] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,6 +40,11 @@ const MyPage = () => {
   };
 
   const handleDeleteAccount = async () => {
+    if (confirmText !== "DELETE") {
+      alert("탈퇴 확인을 위해 'DELETE'를 정확히 입력해주세요.");
+      return;
+    }
+
     if (
       window.confirm(
         "정말로 계정을 삭제하시겠습니까? 모든 데이터가 즉시 삭제되며 이 작업은 되돌릴 수 없습니다.",
@@ -108,15 +114,28 @@ const MyPage = () => {
         {/* 계정 관리 섹션 */}
         <section className="pt-8 border-t border-slate-100 dark:border-slate-800">
           <h2 className="text-xl font-bold mb-4 text-red-500">위험 구역</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
             계정을 삭제하면 모든 디자인 기록과 결제 정보가 영구적으로 삭제됩니다.
+            <br />
+            확인을 위해 아래에 <span className="font-bold text-red-500">DELETE</span>를 입력해주세요.
           </p>
-          <button
-            onClick={handleDeleteAccount}
-            className="px-6 py-3 border border-red-200 text-red-500 font-bold rounded-xl hover:bg-red-50 dark:hover:bg-red-950 transition-all"
-          >
-            계정 탈퇴
-          </button>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <input
+              type="text"
+              placeholder="DELETE 입력"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              className="flex-1 px-4 py-3 rounded-xl border border-red-100 dark:border-red-900/30 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-red-500 outline-none"
+            />
+            <button
+              onClick={handleDeleteAccount}
+              disabled={updating || confirmText !== "DELETE"}
+              className="px-8 py-3 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-all disabled:opacity-30 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              계정 탈퇴
+            </button>
+          </div>
         </section>
       </div>
     </div>
