@@ -6,9 +6,15 @@ const MyPage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [updating, setUpdating] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const navigate = useNavigate();
+
+  const validatePassword = (pw) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
+    return regex.test(pw);
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -25,6 +31,17 @@ const MyPage = () => {
 
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
+
+    if (!validatePassword(newPassword)) {
+      alert("비밀번호는 10자 이상이며, 대문자, 소문자, 숫자, 특수문자를 모두 포함해야 합니다.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     setUpdating(true);
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
@@ -35,6 +52,7 @@ const MyPage = () => {
     } else {
       alert("Password updated successfully!");
       setNewPassword("");
+      setConfirmPassword("");
     }
     setUpdating(false);
   };
@@ -90,23 +108,49 @@ const MyPage = () => {
 
         {/* 비밀번호 재설정 섹션 */}
         <section className="mb-12">
-          <h2 className="text-xl font-bold mb-4 dark:text-slate-200">비밀번호 재설정</h2>
+          <h2 className="text-xl font-bold mb-4 dark:text-slate-200">비밀번호 변경</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
+            비밀번호는 10자 이상이며, 대문자, 소문자, 숫자, 특수문자를 포함해야 합니다.
+          </p>
           <form onSubmit={handleUpdatePassword} className="space-y-4">
             <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                새 비밀번호
+              </label>
               <input
                 type="password"
-                placeholder="새 비밀번호 입력"
+                placeholder="10자 이상, 대/소문자, 숫자, 특수문자 조합"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
                 required
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                비밀번호 확인
+              </label>
+              <input
+                type="password"
+                placeholder="비밀번호를 한 번 더 입력해주세요"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
+                  confirmPassword && newPassword !== confirmPassword 
+                    ? "border-red-500 focus:ring-red-500" 
+                    : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+                }`}
+                required
+              />
+              {confirmPassword && newPassword !== confirmPassword && (
+                <p className="mt-1 text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+              )}
+            </div>
             <button
-              disabled={updating}
+              disabled={updating || !newPassword || newPassword !== confirmPassword}
               className="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all disabled:opacity-50"
             >
-              비밀번호 업데이트
+              {updating ? "업데이트 중..." : "비밀번호 업데이트"}
             </button>
           </form>
         </section>

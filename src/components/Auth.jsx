@@ -5,14 +5,39 @@ export default function Auth({ onClose }) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  const validatePassword = (pw) => {
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
+    return regex.test(pw);
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
+    
+    if ((isSignUp || isForgotPassword) && !validatePassword(password)) {
+      alert("비밀번호는 10자 이상이며, 대문자, 소문자, 숫자, 특수문자를 모두 포함해야 합니다.");
+      return;
+    }
+
+    if (isSignUp && password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      if (isSignUp) {
+      if (isForgotPassword) {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/reset-password`,
+        });
+        if (error) throw error;
+        alert("Password reset email sent! Check your inbox.");
+        setIsForgotPassword(false);
+      } else if (isSignUp) {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         alert("Check your email for the confirmation link!");
@@ -53,7 +78,11 @@ export default function Auth({ onClose }) {
       <div className="bg-white dark:bg-surface-dark w-full max-w-md rounded-3xl p-8 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold dark:text-white">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+            {isForgotPassword
+              ? "Reset Password"
+              : isSignUp
+                ? "Create Account"
+                : "Welcome Back"}
           </h2>
           <button
             onClick={onClose}
@@ -63,39 +92,43 @@ export default function Auth({ onClose }) {
           </button>
         </div>
 
-        <button
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all disabled:opacity-50"
-        >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-            />
-          </svg>
-          Continue with Google
-        </button>
+        {!isForgotPassword && (
+          <>
+            <button
+              onClick={handleGoogleLogin}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all disabled:opacity-50"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                />
+              </svg>
+              Continue with Google
+            </button>
 
-        <div className="my-6 flex items-center gap-4">
-          <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
-          <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-            or
-          </span>
-          <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
-        </div>
+            <div className="my-6 flex items-center gap-4">
+              <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                or
+              </span>
+              <div className="h-px flex-1 bg-slate-200 dark:bg-slate-800"></div>
+            </div>
+          </>
+        )}
 
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
@@ -106,39 +139,94 @@ export default function Auth({ onClose }) {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
+              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
               placeholder="name@email.com"
               required
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Password
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 focus:ring-2 focus:ring-primary outline-none"
-              required
-            />
-          </div>
+          
+          {!isForgotPassword && (
+            <>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
+                  placeholder="Min 10 chars, A-Z, a-z, 0-9, symbol"
+                  required
+                />
+                {isSignUp && (
+                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                    * 10자 이상, 대/소문자, 숫자, 특수문자 조합
+                  </p>
+                )}
+              </div>
+
+              {isSignUp && (
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    Confirm Password
+                  </label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
+                      confirmPassword && password !== confirmPassword 
+                        ? "border-red-500 focus:ring-red-500" 
+                        : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+                    }`}
+                    placeholder="Confirm your password"
+                    required
+                  />
+                  {confirmPassword && password !== confirmPassword && (
+                    <p className="mt-1 text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                  )}
+                </div>
+              )}
+            </>
+          )}
+
           <button
             disabled={loading}
             className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50"
           >
-            {loading ? "Processing..." : isSignUp ? "Sign Up" : "Log In"}
+            {loading
+              ? "Processing..."
+              : isForgotPassword
+                ? "Send Reset Link"
+                : isSignUp
+                  ? "Sign Up"
+                  : "Log In"}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 flex flex-col gap-3 text-center">
+          {!isForgotPassword && !isSignUp && (
+            <button
+              onClick={() => setIsForgotPassword(true)}
+              className="text-sm text-slate-500 hover:text-primary font-medium"
+            >
+              Forgot your password?
+            </button>
+          )}
           <button
-            onClick={() => setIsSignUp(!isSignUp)}
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setIsForgotPassword(false);
+              setConfirmPassword("");
+            }}
             className="text-sm text-primary hover:underline font-medium"
           >
-            {isSignUp
-              ? "Already have an account? Log In"
-              : "Don't have an account? Sign Up"}
+            {isForgotPassword
+              ? "Back to Login"
+              : isSignUp
+                ? "Already have an account? Log In"
+                : "Don't have an account? Sign Up"}
           </button>
         </div>
       </div>
