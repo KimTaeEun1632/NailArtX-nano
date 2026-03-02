@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import GeneratorLayout from "./components/layout/GeneratorLayout";
 import Sidebar from "./components/Sidebar";
@@ -8,6 +9,11 @@ import MainPanel from "./components/MainPanel";
 const API_URL = "/api/generate";
 
 export default function Generate() {
+  const [searchParams] = useSearchParams();
+  const [orderId, setOrderId] = useState(localStorage.getItem("pro_order_id"));
+  const [isPro, setIsPro] = useState(!!localStorage.getItem("pro_order_id"));
+
+  // Existing states restored
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
@@ -18,6 +24,46 @@ export default function Generate() {
   const [selectedQuickStyles, setSelectedQuickStyles] = useState([]);
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
+
+  useEffect(() => {
+    const checkoutId = searchParams.get("checkout_id");
+    if (checkoutId) {
+      verifyPayment(checkoutId);
+    }
+  }, [searchParams]);
+
+  async function verifyPayment(checkoutId) {
+    try {
+      const res = await axios.post("/api/verify", { checkoutId });
+      if (res.data.success) {
+        setIsPro(true);
+        setOrderId(res.data.orderId);
+        localStorage.setItem("pro_order_id", res.data.orderId);
+        alert("Payment Verified! Welcome to Pro.");
+      }
+    } catch (err) {
+      console.error("Verification failed", err);
+    }
+  }
+
+  async function handleRefund() {
+    if (!orderId) return;
+    if (!window.confirm("Are you sure you want to refund your purchase?"))
+      return;
+
+    try {
+      const res = await axios.post("/api/refund", { orderId });
+      if (res.data.id) {
+        setIsPro(false);
+        setOrderId(null);
+        localStorage.removeItem("pro_order_id");
+        alert("Refund successful. Your Pro access has been revoked.");
+      }
+    } catch (err) {
+      console.error("Refund failed", err);
+      alert("Refund failed. Please contact support.");
+    }
+  }
 
   async function generate() {
     try {
@@ -95,6 +141,8 @@ export default function Generate() {
           onGenerate={generate}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
+          isPro={isPro}
+          onRefund={handleRefund}
         />
       }
     />
