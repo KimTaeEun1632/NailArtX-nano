@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import Auth from "./Auth";
 import LightMoon from "../assets/lightMoon.svg";
@@ -9,6 +9,7 @@ import BrushIcon from "../assets/icons/brush.svg?react";
 const Header = ({ dark, setDark }) => {
   const [session, setSession] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -35,6 +36,7 @@ const Header = ({ dark, setDark }) => {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    navigate("/");
   };
 
   return (
@@ -83,7 +85,7 @@ const Header = ({ dark, setDark }) => {
               </span>
             </button>
           </nav>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {session ? (
               <>
                 <button
@@ -123,9 +125,15 @@ const Header = ({ dark, setDark }) => {
                 >
                   Go Pro
                 </button>
+                <Link
+                  to="/mypage"
+                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
+                >
+                  Profile
+                </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4"
+                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
                 >
                   Logout
                 </button>
