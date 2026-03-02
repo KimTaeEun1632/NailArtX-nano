@@ -39,16 +39,30 @@ const MyPage = () => {
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm("정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+    if (
+      window.confirm(
+        "정말로 계정을 삭제하시겠습니까? 모든 데이터가 즉시 삭제되며 이 작업은 되돌릴 수 없습니다.",
+      )
+    ) {
       setUpdating(true);
-      // Supabase Edge Functions나 Admin SDK 없이 클라이언트에서 직접 삭제는 보안상 제약이 있을 수 있음
-      // 여기서는 기본적으로 로그아웃 처리 후 안내하거나, RPC 등을 호출하는 방식을 안내함
-      // 실제로는 별도의 API 엔드포인트가 필요할 수 있습니다.
-      const { error } = await supabase.auth.signOut();
-      if (error) alert(error.message);
-      
-      alert("계정 삭제 요청이 접수되었습니다. (실제 삭제는 관리자 확인 후 처리됩니다)");
-      navigate("/");
+      try {
+        // 1. Supabase RPC 호출하여 계정 삭제 (이름 변경: delete_self)
+        const { error: rpcError } = await supabase.rpc("delete_self");
+
+        if (rpcError) {
+          throw new Error(rpcError.message || "Failed to delete account via RPC");
+        }
+
+        // 2. 로컬 세션 로그아웃
+        await supabase.auth.signOut();
+        alert("계정이 성공적으로 삭제되었습니다. 이용해 주셔서 감사합니다.");
+        navigate("/");
+      } catch (error) {
+        console.error("Delete account error:", error);
+        alert("오류가 발생했습니다: " + error.message);
+      } finally {
+        setUpdating(false);
+      }
     }
   };
 
