@@ -19,6 +19,15 @@ const Header = ({ dark, setDark }) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+
+      // URL에 access_token이 포함되어 있으면 해시를 제거하여 주소창을 깔끔하게 만듦
+      if (window.location.hash.includes("access_token")) {
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search,
+        );
+      }
     });
 
     return () => subscription.unsubscribe();
