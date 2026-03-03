@@ -12,6 +12,25 @@ export default function Generate() {
   const [searchParams] = useSearchParams();
   const [orderId, setOrderId] = useState(localStorage.getItem("pro_order_id"));
   const [isPro, setIsPro] = useState(!!localStorage.getItem("pro_order_id"));
+  const [usageCount, setUsageCount] = useState(() => {
+    const saved = localStorage.getItem("nailart_usage_count");
+    const lastReset = localStorage.getItem("nailart_usage_reset_date");
+    const now = new Date();
+    
+    // Reset count if it's a new month
+    if (lastReset) {
+      const resetDate = new Date(lastReset);
+      if (now.getMonth() !== resetDate.getMonth() || now.getFullYear() !== resetDate.getFullYear()) {
+        localStorage.setItem("nailart_usage_count", "0");
+        localStorage.setItem("nailart_usage_reset_date", now.toISOString());
+        return 0;
+      }
+    } else {
+      localStorage.setItem("nailart_usage_reset_date", now.toISOString());
+    }
+    
+    return saved ? parseInt(saved) : 0;
+  });
 
   // Existing states restored
   const [keyword, setKeyword] = useState("");
@@ -32,6 +51,10 @@ export default function Generate() {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    localStorage.setItem("nailart_usage_count", usageCount.toString());
+  }, [usageCount]);
+
   async function verifyPayment(checkoutId) {
     try {
       const res = await axios.post("/api/verify", { checkoutId });
@@ -39,7 +62,7 @@ export default function Generate() {
         setIsPro(true);
         setOrderId(res.data.orderId);
         localStorage.setItem("pro_order_id", res.data.orderId);
-        alert("Payment Verified! Welcome to Pro.");
+        alert("Payment Verified! Welcome to NailArtX Pro. Your limit is now 80 designs per month.");
       }
     } catch (err) {
       console.error("Verification failed", err);
@@ -66,6 +89,14 @@ export default function Generate() {
   }
 
   async function generate() {
+    const limit = isPro ? 80 : 5;
+    if (usageCount >= limit) {
+      alert(isPro 
+        ? "You've reached your monthly limit of 80 designs. Limit will reset next month." 
+        : "You've reached the free limit (5 designs/month). Upgrade to Pro for 80 designs and no watermarks!");
+      return;
+    }
+
     try {
       setLoading(true);
       setImg(null);
@@ -83,7 +114,7 @@ export default function Generate() {
 
       const response = await axios.post(
         API_URL,
-        { prompt, level },
+        { prompt, level, isPro, usageCount },
         { responseType: "arraybuffer", transformResponse: [] },
       );
 
@@ -99,13 +130,21 @@ export default function Generate() {
       });
 
       setImg(dataUrl);
+      setUsageCount(prev => prev + 1);
     } catch (err) {
       if (err.response?.data instanceof ArrayBuffer) {
         const text = new TextDecoder().decode(err.response.data);
         console.error("에러 내용:", text);
+        try {
+          const errorJson = JSON.parse(text);
+          alert(errorJson.error || "이미지 생성 실패");
+        } catch(e) {
+          alert("이미지 생성 실패");
+        }
+      } else {
+        console.error(err);
+        alert("이미지 생성 실패");
       }
-      console.error(err);
-      alert("이미지 생성 실패");
     } finally {
       setLoading(false);
     }

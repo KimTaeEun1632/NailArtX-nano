@@ -1,4 +1,4 @@
-const POLAR_API_BASE = "https://sandbox-api.polar.sh/v1";
+const POLAR_API_BASE = "https://api.polar.sh/v1";
 
 export const onRequestPost = async (context) => {
   try {

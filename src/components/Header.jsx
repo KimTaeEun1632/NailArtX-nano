@@ -99,7 +99,7 @@ const Header = ({ dark, setDark }) => {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          productId: "f8c3170e-329a-4cd6-955f-0dd2ae2fdb90",
+                          productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
                         }),
                       });
 
@@ -245,11 +245,12 @@ const Header = ({ dark, setDark }) => {
                 <button
                   onClick={async () => {
                     try {
+                      setIsMenuOpen(false);
                       const response = await fetch("/api/checkout", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                          productId: "f8c3170e-329a-4cd6-955f-0dd2ae2fdb90",
+                          productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
                         }),
                       });
 
