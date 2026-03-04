@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import GeneratorLayout from "./components/layout/GeneratorLayout";
@@ -49,30 +49,29 @@ export default function Generate() {
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
 
+  const verifyPayment = useCallback(
+    async (checkoutId) => {
+      try {
+        const res = await axios.post("/api/verify", { checkoutId });
+        if (res.data.success) {
+          setIsPro(true);
+          setOrderId(res.data.orderId);
+          localStorage.setItem("pro_order_id", res.data.orderId);
+          alert(t("generate.alerts.paymentVerified"));
+        }
+      } catch (err) {
+        console.error("Verification failed", err);
+      }
+    },
+    [t],
+  );
+
   useEffect(() => {
     const checkoutId = searchParams.get("checkout_id");
     if (checkoutId) {
       verifyPayment(checkoutId);
     }
-  }, [searchParams]);
-
-  useEffect(() => {
-    localStorage.setItem("nailart_usage_count", usageCount.toString());
-  }, [usageCount]);
-
-  async function verifyPayment(checkoutId) {
-    try {
-      const res = await axios.post("/api/verify", { checkoutId });
-      if (res.data.success) {
-        setIsPro(true);
-        setOrderId(res.data.orderId);
-        localStorage.setItem("pro_order_id", res.data.orderId);
-        alert(t("generate.alerts.paymentVerified"));
-      }
-    } catch (err) {
-      console.error("Verification failed", err);
-    }
-  }
+  }, [searchParams, verifyPayment]);
 
   async function handleRefund() {
     if (!orderId) return;
