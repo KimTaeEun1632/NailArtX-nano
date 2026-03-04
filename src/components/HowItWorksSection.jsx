@@ -1,8 +1,12 @@
 import test1 from "/step1.png";
 import step3 from "/겨울 하운트 체크 네일.jpg";
 import CheckIcon from "../assets/icons/check.svg?react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function HowItWorksSection() {
+  const { t } = useLanguage();
+  const steps = t("howItWorks.steps");
+
   return (
     <section
       id="how-it-works"
@@ -13,42 +17,45 @@ export default function HowItWorksSection() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-14 gap-6">
           <div className="max-w-xl">
             <h2 className="text-[#151118] dark:text-white text-3xl lg:text-4xl font-bold mb-4">
-              From Idea to Reality
+              {t("howItWorks.title")}
             </h2>
             <p className="text-[#4a454e] dark:text-gray-300 text-lg">
-              Three simple steps to your dream manicure. No artistic skills
-              required.
+              {t("howItWorks.subtitle")}
             </p>
           </div>
 
-          <p className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all">
-            Start Tutorial
+          <p className="text-primary font-bold flex items-center gap-1 hover:gap-2 transition-all cursor-pointer">
+            {t("howItWorks.tutorial")}
           </p>
         </div>
 
         {/* Steps */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
-          <Step
-            step="1"
-            title="Input your idea"
-            desc="Describe the colors, patterns, texture, or style you want to see."
-            example="“Blue marble with gold flakes”"
-            img={test1}
-          />
+          {Array.isArray(steps) && (
+            <>
+              <Step
+                step="1"
+                title={steps[0].title}
+                desc={steps[0].desc}
+                example={steps[0].example}
+                img={test1}
+              />
 
-          <Step
-            step="2"
-            title="AI Generation"
-            desc="Our AI instantly creates multiple high-fidelity design variations."
-            isMiddle
-          />
+              <Step
+                step="2"
+                title={steps[1].title}
+                desc={steps[1].desc}
+                isMiddle
+              />
 
-          <Step
-            step="3"
-            title="Save & Replicate"
-            desc="Download the reference and show it to your nail artist."
-            success
-          />
+              <Step
+                step="3"
+                title={steps[2].title}
+                desc={steps[2].desc}
+                success
+              />
+            </>
+          )}
         </div>
       </div>
     </section>

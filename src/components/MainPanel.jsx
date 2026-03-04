@@ -1,6 +1,7 @@
 import ImageCanvas from "./canvas/ImageCanvas";
 import PromptBox from "./PromptBox";
 import SideToggle from "../assets/icons/sideToggle.svg?react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const MainPanel = ({
   img,
@@ -13,6 +14,8 @@ const MainPanel = ({
   isPro,
   onRefund,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <section className="h-full flex flex-col gap-4 w-full">
       {/* toggle button */}
@@ -26,7 +29,7 @@ const MainPanel = ({
           </button>
           {!isSidebarOpen && (
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-tight">
-              {isSidebarOpen ? "Close Menu" : "Menu"}
+              {isSidebarOpen ? "" : "Menu"}
             </span>
           )}
         </div>
@@ -35,13 +38,13 @@ const MainPanel = ({
         {isPro && (
           <div className="flex items-center gap-3 bg-primary/5 px-4 py-2 rounded-xl border border-primary/20">
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
-              ✨ Pro Active
+              ✨ {t("generate.panel.proBadge")} Active
             </span>
             <button
               onClick={onRefund}
               className="text-[10px] text-slate-400 hover:text-red-500 underline transition-colors"
             >
-              Request Refund
+              {t("generate.panel.refundBtn")}
             </button>
           </div>
         )}

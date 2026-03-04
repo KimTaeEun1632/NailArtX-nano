@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const HeroSection = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="relative px-6 py-12 lg:px-20 lg:py-24 bg-radial-[at_100%_10%] from-purple-200 via-transparent to-transparent)  dark:from-purple-900">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-20 items-center">
@@ -23,20 +26,19 @@ const HeroSection = () => {
             </svg>
 
             <span className="text-xs font-bold uppercase">
-              AI-Powered Creativity
+              {t("hero.badge")}
             </span>
           </div>
 
           <h1 className="text-5xl lg:text-6xl font-black leading-[1.1]">
-            Your Next Nail Art,{" "}
+            {t("hero.title1")}{" "}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-purple-400">
-              Imagined by AI.
+              {t("hero.title2")}
             </span>
           </h1>
 
           <p className="text-lg lg:text-xl text-[#4a454e] dark:text-gray-300 max-w-[600px] mx-auto lg:mx-0">
-            Generate unlimited, professional-quality nail art designs in
-            seconds.
+            {t("hero.subtitle")}
           </p>
 
           <div className="mt-6">
@@ -44,7 +46,7 @@ const HeroSection = () => {
               to="/generate"
               className="inline-flex items-center h-14 px-8 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/30 hover:bg-primary-dark"
             >
-              Start Designing Free
+              {t("hero.cta")}
             </Link>
           </div>
         </div>

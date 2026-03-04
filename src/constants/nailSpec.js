@@ -1,37 +1,37 @@
 export const NAIL_SPEC = {
   lengths: {
-    short: { label: "숏", mm: "0~2mm" },
-    medium: { label: "미디엄", mm: "5~7mm" },
-    long: { label: "롱", mm: "10~15mm" },
-    extra_long: { label: "엑스트라 롱", mm: "20mm+" },
+    short: { label: "generate.sidebar.nailSpec.lengths.short", mm: "0~2mm" },
+    medium: { label: "generate.sidebar.nailSpec.lengths.medium", mm: "5~7mm" },
+    long: { label: "generate.sidebar.nailSpec.lengths.long", mm: "10~15mm" },
+    extra_long: { label: "generate.sidebar.nailSpec.lengths.extra_long", mm: "20mm+" },
   },
   shapes: {
     square: {
-      label: "스퀘어",
+      label: "generate.sidebar.nailSpec.shapes.square",
       allowed: ["short", "medium"],
       recommended: "medium",
       min: "short",
     },
     almond: {
-      label: "아몬드",
+      label: "generate.sidebar.nailSpec.shapes.almond",
       allowed: ["medium", "long"],
       recommended: "long",
       min: "medium",
     },
     oval: {
-      label: "오벌",
+      label: "generate.sidebar.nailSpec.shapes.oval",
       allowed: ["medium", "long"],
       recommended: "medium",
       min: "medium",
     },
     coffin: {
-      label: "코핀",
+      label: "generate.sidebar.nailSpec.shapes.coffin",
       allowed: ["long", "extra_long"],
       recommended: "long",
       min: "long",
     },
     round: {
-      label: "라운드",
+      label: "generate.sidebar.nailSpec.shapes.round",
       allowed: ["short", "medium"],
       recommended: "medium",
       min: "medium",

@@ -1,15 +1,19 @@
 import { useState } from "react";
 import { NAIL_SPEC } from "../constants/nailSpec";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
+  const { t } = useLanguage();
   const [uxMessage, setUxMessage] = useState("");
 
   const handleShapeSelect = (shapeKey) => {
     const rule = NAIL_SPEC.shapes[shapeKey];
     setShape(shapeKey);
     setLength(rule.recommended);
+    
+    const recommendedLabel = t(NAIL_SPEC.lengths[rule.recommended].label);
     setUxMessage(
-      `선택한 쉐입은 ${rule.recommended} 길이가 가장 예쁘게 표현돼요.`,
+      t("generate.sidebar.nailSpec.uxMessage").replace("{recommended}", recommendedLabel)
     );
   };
 
@@ -18,7 +22,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
       {/* Nail Shape */}
       <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
         <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
-          Nail Shape
+          {t("generate.sidebar.shape")}
         </h3>
 
         <div className="grid grid-cols-2 gap-2">
@@ -38,7 +42,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
                   shape === key ? "text-primary" : ""
                 }`}
               >
-                {s.label}
+                {t(s.label)}
               </span>
             </button>
           ))}
@@ -49,7 +53,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
       {shape && (
         <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
-            Nail Length
+            {t("generate.sidebar.length")}
           </h3>
 
           <div className="grid grid-cols-2 gap-2">
@@ -64,8 +68,9 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
                     setLength(key);
                     const rule = NAIL_SPEC.shapes[shape];
                     if (key === rule.recommended) {
+                      const recommendedLabel = t(NAIL_SPEC.lengths[rule.recommended].label);
                       setUxMessage(
-                        `선택한 쉐입은 ${rule.recommended} 길이가 가장 예쁘게 표현돼요.`,
+                        t("generate.sidebar.nailSpec.uxMessage").replace("{recommended}", recommendedLabel)
                       );
                     } else {
                       setUxMessage("");
@@ -80,7 +85,7 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
                           : "border-slate-200 hover:bg-primary/5"
                     }`}
                 >
-                  <div className="text-[11px] font-bold">{l.label}</div>
+                  <div className="text-[11px] font-bold">{t(l.label)}</div>
                   <div className="text-[10px] text-slate-400">{l.mm}</div>
                 </button>
               );

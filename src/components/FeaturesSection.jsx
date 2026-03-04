@@ -1,6 +1,11 @@
 import FeaturesIcon from "./FeaturesIcons";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function FeaturesSection() {
+  const { t } = useLanguage();
+
+  const features = t("features.items");
+
   return (
     <section
       id="features"
@@ -10,17 +15,16 @@ export default function FeaturesSection() {
         {/* Header */}
         <div className="mb-16 text-center max-w-[720px] mx-auto">
           <h2 className="text-[#151118] dark:text-white text-3xl lg:text-4xl font-bold mb-4">
-            Beauty meets Technology
+            {t("features.title")}
           </h2>
           <p className="text-[#4a454e] dark:text-gray-300 text-lg">
-            We combine cutting-edge AI with fashion-forward aesthetics to help
-            you discover styles you never thought possible.
+            {t("features.subtitle")}
           </p>
         </div>
 
         {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {FEATURES.map(({ icon, title, desc }) => (
+          {Array.isArray(features) && features.map(({ title, desc }, index) => (
             <div
               key={title}
               className="
@@ -42,7 +46,7 @@ export default function FeaturesSection() {
                 "
               >
                 <FeaturesIcon
-                  name={icon}
+                  name={ICON_LIST[index]}
                   className="
                     w-6 h-6
                     text-primary
@@ -69,20 +73,4 @@ export default function FeaturesSection() {
   );
 }
 
-const FEATURES = [
-  {
-    icon: "blot",
-    title: "Instant Inspiration",
-    desc: "Generate dozens of unique concepts in seconds just by typing a simple description.",
-  },
-  {
-    icon: "fingerprint",
-    title: "Uniquely Yours",
-    desc: "Every design is created from scratch, ensuring your manicure is as unique as your fingerprint.",
-  },
-  {
-    icon: "camera",
-    title: "Salon-Ready References",
-    desc: "High-resolution visuals you can take directly to your nail technician.",
-  },
-];
+const ICON_LIST = ["blot", "fingerprint", "camera"];

@@ -1,22 +1,25 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const CTASection = () => {
+  const { t } = useLanguage();
+
   return (
     <section className="px-6 py-20 lg:px-20 bg-background-light dark:bg-background-dark">
       <div className="max-w-7xl mx-auto">
         <div className="rounded-3xl bg-background-dark dark:bg-surface-dark px-8 py-16 text-center text-white">
           <h2 className="text-3xl lg:text-5xl font-black">
-            Ready to wear art on your fingertips?
+            {t("cta.title")}
           </h2>
           <p className="text-gray-300 mt-4">
-            Join thousands using NailAI to create their next viral look.
+            {t("cta.subtitle")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
             <Link
               to="/generate"
-              className="h-14 px-8 rounded-xl bg-primary font-bold flex items-center justify-center"
+              className="h-14 px-8 rounded-xl bg-primary font-bold flex items-center justify-center hover:bg-primary-dark transition-colors"
             >
-              Start Designing Free
+              {t("cta.button")}
             </Link>
           </div>
         </div>

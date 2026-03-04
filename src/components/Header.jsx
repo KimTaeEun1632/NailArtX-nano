@@ -5,8 +5,10 @@ import Auth from "./Auth";
 import LightMoon from "../assets/lightMoon.svg";
 import DarkMoon from "../assets/moon.svg";
 import BrushIcon from "../assets/icons/brush.svg?react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const Header = ({ dark, setDark }) => {
+  const { lang, toggleLanguage, t } = useLanguage();
   const [session, setSession] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,9 +51,9 @@ const Header = ({ dark, setDark }) => {
           <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
             <BrushIcon />
           </div>
-          <a href="/" className="text-xl font-bold">
+          <Link to="/" className="text-xl font-bold">
             NailArtX
-          </a>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
@@ -59,35 +61,44 @@ const Header = ({ dark, setDark }) => {
           <nav className="flex items-center gap-9">
             <a
               href="#how-it-works"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium hover:text-primary transition-colors"
             >
-              How it works
+              {t("header.howItWorks")}
             </a>
             <a
               href="#features"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Features
+              {t("header.features")}
             </a>
             <a
               href="#gallery"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium hover:text-primary transition-colors"
             >
-              Gallery
+              {t("header.gallery")}
             </a>
 
-            <button
-              onClick={() => setDark(!dark)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 dark:border "
-            >
-              <span className="material-symbols-outlined flex items-center justify-center">
-                {dark ? (
-                  <img src={LightMoon} alt="dark-mood" className="w-5 h-5"></img>
-                ) : (
-                  <img src={DarkMoon} alt="white-mood" className="w-5 h-5" />
-                )}
-              </span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleLanguage}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors uppercase"
+                title={lang === "ko" ? "Switch to English" : "한국어로 변경"}
+              >
+                {lang === "ko" ? "EN" : "KO"}
+              </button>
+              <button
+                onClick={() => setDark(!dark)}
+                className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 dark:border "
+              >
+                <span className="material-symbols-outlined flex items-center justify-center">
+                  {dark ? (
+                    <img src={LightMoon} alt="dark-mood" className="w-5 h-5"></img>
+                  ) : (
+                    <img src={DarkMoon} alt="white-mood" className="w-5 h-5" />
+                  )}
+                </span>
+              </button>
+            </div>
           </nav>
           <div className="flex items-center gap-2">
             {session ? (
@@ -127,25 +138,25 @@ const Header = ({ dark, setDark }) => {
                   }}
                   className="flex items-center justify-center h-10 px-6 rounded-xl border border-primary text-primary font-bold hover:bg-primary/5 transition-colors"
                 >
-                  Go Pro
+                  {t("header.goPro")}
                 </button>
                 <Link
                   to="/mypage"
                   className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
                 >
-                  Profile
+                  {t("header.profile")}
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
                 >
-                  Logout
+                  {t("header.logout")}
                 </button>
                 <Link
                   to="/generate"
                   className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark"
                 >
-                  Start Designing
+                  {t("header.startDesigning")}
                 </Link>
               </>
             ) : (
@@ -153,14 +164,20 @@ const Header = ({ dark, setDark }) => {
                 onClick={() => setShowAuth(true)}
                 className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark"
               >
-                Get Started
+                {t("header.getStarted")}
               </button>
             )}
           </div>
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="flex items-center gap-4 md:hidden">
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleLanguage}
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-[10px] font-bold uppercase transition-colors"
+          >
+            {lang === "ko" ? "EN" : "KO"}
+          </button>
           <button
             onClick={() => setDark(!dark)}
             className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 transition-colors"
@@ -219,21 +236,21 @@ const Header = ({ dark, setDark }) => {
               onClick={closeMenu}
               className="text-lg font-semibold hover:text-primary transition-colors"
             >
-              How it works
+              {t("header.howItWorks")}
             </a>
             <a
               href="#features"
               onClick={closeMenu}
               className="text-lg font-semibold hover:text-primary transition-colors"
             >
-              Features
+              {t("header.features")}
             </a>
             <a
               href="#gallery"
               onClick={closeMenu}
               className="text-lg font-semibold hover:text-primary transition-colors"
             >
-              Gallery
+              {t("header.gallery")}
             </a>
           </nav>
 
@@ -271,27 +288,27 @@ const Header = ({ dark, setDark }) => {
                   }}
                   className="flex items-center justify-center h-12 rounded-xl border border-primary text-primary font-bold"
                 >
-                  Go Pro
+                  {t("header.goPro")}
                 </button>
                 <Link
                   to="/mypage"
                   onClick={closeMenu}
                   className="flex items-center justify-center h-12 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300"
                 >
-                  Profile
+                  {t("header.profile")}
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center justify-center h-12 rounded-xl border border-slate-200 dark:border-slate-700 font-bold text-slate-600 dark:text-slate-300"
                 >
-                  Logout
+                  {t("header.logout")}
                 </button>
                 <Link
                   to="/generate"
                   onClick={closeMenu}
                   className="flex items-center justify-center h-12 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20"
                 >
-                  Start Designing
+                  {t("header.startDesigning")}
                 </Link>
               </>
             ) : (
@@ -302,7 +319,7 @@ const Header = ({ dark, setDark }) => {
                 }}
                 className="flex items-center justify-center h-12 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20"
               >
-                Get Started
+                {t("header.getStarted")}
               </button>
             )}
           </div>

@@ -3,52 +3,136 @@ import React from "react";
 const Terms = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 lg:py-24 prose dark:prose-invert">
-      <h1 className="text-3xl font-bold mb-8">서비스 이용약관</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">최종 수정일: 2024년 3월 2일</p>
+      <h1 className="text-3xl font-bold mb-2">Terms of Service</h1>
+      <h2 className="text-xl font-medium text-gray-600 dark:text-gray-400 mb-8">
+        서비스 이용약관
+      </h2>
+      <p className="text-sm text-gray-500 mb-8">Last Updated: March 4, 2026</p>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">제 1 조 (목적)</h2>
-        <p>본 약관은 NailArtX(이하 "회사")가 제공하는 AI 네일 아트 디자인 생성 서비스(이하 "서비스") 및 관련 제반 서비스의 이용과 관련하여 회사와 이용자 사이의 권리, 의무 및 책임사항, 기타 필요한 사항을 규정함을 목적으로 합니다.</p>
-      </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+        {/* English Section */}
+        <div>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">1. Purpose</h3>
+            <p>
+              These Terms of Service govern your use of the AI nail art design
+              generation service (the "Service") provided by [Your Company Name]
+              ("Company"). By using the Service, you agree to these terms.
+            </p>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">제 2 조 (용어의 정의)</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>"서비스"라 함은 이용자가 입력한 텍스트 또는 선택한 옵션을 바탕으로 AI 기술을 이용하여 네일 아트 디자인 이미지를 생성해주는 NailArtX 서비스를 의미합니다.</li>
-          <li>"이용자"라 함은 회사의 서비스에 접속하여 본 약관에 따라 회사가 제공하는 서비스를 이용하는 회원 및 비회원을 말합니다.</li>
-          <li>"콘텐츠"라 함은 서비스 이용 과정에서 생성된 이미지, 텍스트 등의 결과물을 의미합니다.</li>
-        </ol>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">2. Service Description</h3>
+            <p>
+              The Service provides AI-generated nail art designs based on user
+              inputs. The Service is provided "as is" and "as available."
+            </p>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">제 3 조 (서비스의 내용 및 변경)</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>회사는 이용자에게 AI 네일 아트 디자인 생성, 갤러리 저장, 디자인 레퍼런스 제공 등의 서비스를 제공합니다.</li>
-          <li>회사는 서비스의 품질 향상 또는 기술적 사유 등에 따라 서비스의 내용을 변경할 수 있으며, 이 경우 웹사이트를 통해 사전에 공지합니다.</li>
-        </ol>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">3. Intellectual Property</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>
+                Ownership of AI-generated content is subject to your
+                subscription plan.
+              </li>
+              <li>
+                Users are granted a non-exclusive right to use generated designs
+                for personal or commercial use depending on the plan.
+              </li>
+              <li>
+                AI-generated results are not unique; similar results may be
+                generated for other users.
+              </li>
+            </ul>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">제 4 조 (지식재산권 및 저작권)</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>서비스를 통해 생성된 결과물(디자인 이미지)의 저작권 및 사용 권한은 회사와 이용자 간의 별도 유료 플랜 규정에 따릅니다.</li>
-          <li>이용자는 생성된 디자인을 개인적인 용도(네일 샵 방문 시 참고용 등)로 자유롭게 사용할 수 있습니다. 단, 상업적 이용의 경우 해당 플랜의 규정을 준수해야 합니다.</li>
-          <li>AI 모델의 특성상 생성된 이미지는 다른 이용자의 결과물과 유사할 수 있으며, 이에 대한 독점적인 권리를 보장하지 않습니다.</li>
-        </ol>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">
+              4. Subscriptions and Payments
+            </h3>
+            <p>
+              Payments are processed through Polar. Subscriptions automatically
+              renew unless canceled at least 24 hours before the end of the
+              current period.
+            </p>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">제 5 조 (책임의 제한)</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>회사는 AI 기술을 통해 생성된 디자인의 정확성, 현실 세계에서의 구현 가능성, 미적 만족도를 보장하지 않습니다.</li>
-          <li>실제 네일 시술 결과는 시술자의 숙련도, 재료, 손톱 상태에 따라 생성된 이미지와 다를 수 있으며, 회사는 이에 대해 책임을 지지 않습니다.</li>
-          <li>회사는 천재지변, 서비스 장애, 기간통신사업자의 서비스 중단 등으로 인하여 서비스를 제공할 수 없는 경우에는 책임을 면합니다.</li>
-        </ol>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">
+              5. Limitation of Liability
+            </h3>
+            <p>
+              The Company is not liable for the actual feasibility of nail
+              designs in real-world applications or any dissatisfaction with the
+              AI output.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">6. Governing Law</h3>
+            <p>
+              These terms are governed by the laws of the Republic of Korea (or
+              your jurisdiction).
+            </p>
+          </section>
+        </div>
+
+        {/* Korean Section */}
+        <div className="border-l pl-8 border-gray-200 dark:border-gray-800">
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">제 1 조 (목적)</h3>
+            <p>
+              본 약관은 [회사명] (이하 "회사")가 제공하는 AI 네일 아트 디자인
+              생성 서비스(이하 "서비스") 이용과 관련하여 회사와 이용자 사이의
+              권리와 의무를 규정합니다.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">제 2 조 (서비스의 내용)</h3>
+            <p>
+              회사는 사용자의 입력을 바탕으로 AI 네일 디자인을 생성합니다.
+              서비스는 "있는 그대로" 제공되며, 결과의 완벽성을 보장하지
+              않습니다.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">제 3 조 (지식재산권)</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>생성된 콘텐츠의 소유권은 이용자의 구독 플랜에 따릅니다.</li>
+              <li>
+                이용자는 플랜에 따라 개인적 또는 상업적 용도로 디자인을 사용할
+                권한을 갖습니다.
+              </li>
+              <li>AI 특성상 다른 이용자와 유사한 결과가 생성될 수 있습니다.</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">제 4 조 (구독 및 결제)</h3>
+            <p>
+              결제는 Polar를 통해 처리됩니다. 정기 구독은 현재 기간 종료 24시간
+              전에 해지하지 않으면 자동 갱신됩니다.
+            </p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">제 5 조 (책임의 제한)</h3>
+            <p>
+              회사는 생성된 디자인의 실제 구현 가능성이나 결과물에 대한 주관적
+              만족도에 대해 책임을 지지 않습니다.
+            </p>
+          </section>
+        </div>
+      </div>
+
+      <section className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 text-sm">
+        <h3 className="font-bold mb-2">Company Information / 회사 정보</h3>
+        <p>Company: NailArtX</p>
+        <p>Email: qpwoal1324@naver.com</p>
       </section>
-      
-      <p className="mt-12 text-sm text-gray-500">
-        본 약관에 명시되지 않은 사항은 관계 법령 또는 상관례에 따릅니다.
-      </p>
     </div>
   );
 };

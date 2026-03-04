@@ -3,45 +3,63 @@ import React from "react";
 const Refund = () => {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 lg:py-24 prose dark:prose-invert">
-      <h1 className="text-3xl font-bold mb-8">환불 규정</h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">최종 수정일: 2024년 3월 2일</p>
+      <h1 className="text-3xl font-bold mb-2">Refund Policy</h1>
+      <h2 className="text-xl font-medium text-gray-600 dark:text-gray-400 mb-8">환불 규정</h2>
+      <p className="text-sm text-gray-500 mb-8">Last Updated: March 4, 2026</p>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">1. 디지털 콘텐츠의 특성</h2>
-        <p>NailArtX(이하 "회사")가 제공하는 AI 네일 아트 디자인 생성 서비스는 '전자상거래 등에서의 소비자보호에 관한 법률' 제17조 제2항 제5호에 따른 "디지털콘텐츠의 제공이 개시된 경우"에 해당합니다.</p>
-      </section>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+        {/* English Section */}
+        <div>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">1. Digital Goods</h3>
+            <p>Our service provides digital AI content. Due to the nature of digital goods, refunds are generally not provided once a generation has been performed.</p>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">2. 청약철회 및 환불 조건</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li><strong>생성 전 환불:</strong> 유료 크레딧 또는 요금제 결제 후, 단 한 건의 이미지도 생성하지 않은 경우 결제일로부터 7일 이내에 전액 환불이 가능합니다.</li>
-          <li><strong>생성 후 환불:</strong> AI를 통해 이미지가 이미 생성된 경우, 디지털 재화의 특성상 서비스의 가치가 소모된 것으로 간주하여 환불이 불가능합니다.</li>
-          <li><strong>자동 갱신:</strong> 정기 구독 요금제의 경우, 다음 결제 예정일 전까지 구독을 해지할 수 있습니다. 이미 결제된 해당 월의 요금은 환불되지 않으며, 해당 기간까지는 서비스 이용이 가능합니다.</li>
-        </ol>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">2. Eligibility for Refund</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>Full refund is available within 7 days of purchase if NO generations have been made.</li>
+              <li>Refunds may be issued for technical failures where the service was unavailable.</li>
+            </ul>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">3. 예외적인 환불 사유</h2>
-        <p>아래와 같은 사유에 해당할 경우, 고객센터 문의를 통해 예외적으로 환불을 진행할 수 있습니다.</p>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>회사의 시스템 오류로 인해 결제 후 정상적으로 이미지가 생성되지 않은 경우</li>
-          <li>중복 결제가 발생한 경우</li>
-          <li>회사의 귀책 사유로 서비스를 전혀 이용할 수 없게 된 경우</li>
-        </ul>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">3. Subscriptions</h3>
+            <p>You can cancel your subscription at any time. Your access will continue until the end of the current billing period. Already paid monthly fees are non-refundable.</p>
+          </section>
 
-      <section className="mb-8">
-        <h2 className="text-xl font-bold mb-4">4. 환불 절차</h2>
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>환불 신청은 웹사이트 내 '고객 지원' 또는 지정된 이메일을 통해 접수할 수 있습니다.</li>
-          <li>환불 신청 접수 후 영업일 기준 3~5일 이내에 승인 여부를 검토하여 안내드립니다.</li>
-          <li>환불 시 사용된 결제 수단(카드사 등)의 정책에 따라 실제 대금 환급까지 추가 시간이 소요될 수 있습니다.</li>
-        </ol>
-      </section>
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">4. How to Request</h3>
+            <p>Please contact us at [Your Contact Email] with your order details to request a refund.</p>
+          </section>
+        </div>
 
-      <p className="mt-12 text-sm text-gray-500">
-        기타 환불과 관련한 구체적인 사항은 관계 법령에 따릅니다.
-      </p>
+        {/* Korean Section */}
+        <div className="border-l pl-8 border-gray-200 dark:border-gray-800">
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">1. 디지털 상품 특성</h3>
+            <p>회사의 서비스는 AI 디지털 콘텐츠를 제공합니다. 디지털 상품의 특성상 이미지가 생성된 이후에는 환불이 불가능합니다.</p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">2. 환불 조건</h3>
+            <ul className="list-disc pl-5 space-y-2">
+              <li>이미지 생성을 한 건도 하지 않은 경우, 결제 후 7일 이내 전액 환불이 가능합니다.</li>
+              <li>기술적 결함으로 서비스를 이용하지 못한 경우 환불이 가능합니다.</li>
+            </ul>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">3. 정기 구독</h3>
+            <p>구독은 언제든 해지할 수 있으며, 결제된 해당 월의 기간까지는 이용이 가능합니다. 이미 결제된 요금은 반환되지 않습니다.</p>
+          </section>
+
+          <section className="mb-8">
+            <h3 className="text-lg font-bold mb-4">4. 신청 방법</h3>
+            <p>[연락처 이메일]로 주문 내역과 함께 환불을 요청해 주세요.</p>
+          </section>
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function GallerySection() {
+  const { t } = useLanguage();
+
   return (
     <section
       id="gallery"
@@ -9,13 +12,13 @@ export default function GallerySection() {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-10">
           <h2 className="text-[#151118] dark:text-white text-2xl font-bold">
-            Community Creations
+            {t("gallery.title")}
           </h2>
           <Link
-            href="/"
+            to="/"
             className="text-sm font-medium text-primary hover:underline"
           >
-            View All Gallery
+            {t("gallery.viewAll")}
           </Link>
         </div>
 
@@ -31,7 +34,7 @@ export default function GallerySection() {
                 className="w-full h-auto object-cover transition duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                <p className="text-white text-xs font-medium">{item.title}</p>
+                <p className="text-white text-xs font-medium">{t(`gallery.items.${item.title.toLowerCase()}`)}</p>
               </div>
             </div>
           ))}

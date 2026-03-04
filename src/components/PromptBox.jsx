@@ -1,17 +1,22 @@
+import { useLanguage } from "../contexts/LanguageContext";
+
 const PromptBox = ({ keyword, setKeyword, onGenerate, loading }) => {
+  const { t } = useLanguage();
   const isGenerateDisabled = !keyword.trim() || loading;
 
   return (
     <div className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark/50 p-4 sm:p-6">
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="flex flex-col md:flex-row gap-4">
         {/* Text Input */}
-        <div className="lg:col-span-3">
+        <div className="flex-1">
           <label className="flex w-full flex-col">
-            <p className="pb-2 text-sm font-medium">Describe your vision</p>
+            <p className="pb-2 text-sm font-bold text-slate-500 uppercase tracking-wider">
+              {t("howItWorks.steps.0.title")}
+            </p>
             <div className="relative flex w-full items-center">
               <input
-                className="form-input h-12 w-full rounded-lg border border-slate-300 dark:border-slate-700 bg-transparent pl-4"
-                placeholder="e.g., snowflake nail art with chrome"
+                className="form-input h-14 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark px-4 focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                placeholder={t("generate.panel.placeholder")}
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
               />
@@ -20,15 +25,14 @@ const PromptBox = ({ keyword, setKeyword, onGenerate, loading }) => {
         </div>
 
         {/* Generate Button */}
-        <div className="lg:self-end">
+        <div className="md:self-end">
           <button
             type="button"
             onClick={onGenerate}
             disabled={isGenerateDisabled}
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex h-14 w-full md:w-48 items-center justify-center gap-2 rounded-xl bg-primary text-white font-bold hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-primary/20"
           >
-            <span className="material-symbols-outlined">Auto awesome</span>
-            Generate
+            {loading ? t("common.loading") : t("generate.panel.generateBtn")}
           </button>
         </div>
       </div>

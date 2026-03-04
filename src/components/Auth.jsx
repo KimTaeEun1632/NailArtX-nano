@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { supabase } from "../supabase";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function Auth({ onClose }) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,12 +20,12 @@ export default function Auth({ onClose }) {
     e.preventDefault();
     
     if ((isSignUp || isForgotPassword) && !validatePassword(password)) {
-      alert("비밀번호는 10자 이상이며, 대문자, 소문자, 숫자, 특수문자를 모두 포함해야 합니다.");
+      alert(t("auth.passwordHint"));
       return;
     }
 
     if (isSignUp && password !== confirmPassword) {
-      alert("비밀번호가 일치하지 않습니다.");
+      alert(t("auth.passwordMismatch"));
       return;
     }
 
@@ -40,7 +42,7 @@ export default function Auth({ onClose }) {
       } else if (isSignUp) {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        alert("Check your email for the confirmation link!");
+        alert(t("auth.checkEmail"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
@@ -79,10 +81,10 @@ export default function Auth({ onClose }) {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold dark:text-white">
             {isForgotPassword
-              ? "Reset Password"
+              ? t("auth.resetPassword")
               : isSignUp
-                ? "Create Account"
-                : "Welcome Back"}
+                ? t("auth.createAccount")
+                : t("auth.welcome")}
           </h2>
           <button
             onClick={onClose}
@@ -117,7 +119,7 @@ export default function Auth({ onClose }) {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              Continue with Google
+              {t("auth.google")}
             </button>
 
             <div className="my-6 flex items-center gap-4">
@@ -133,7 +135,7 @@ export default function Auth({ onClose }) {
         <form onSubmit={handleAuth} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-              Email
+              {t("auth.email")}
             </label>
             <input
               type="email"
@@ -149,19 +151,19 @@ export default function Auth({ onClose }) {
             <>
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                  Password
+                  {t("auth.password")}
                 </label>
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
-                  placeholder="Min 10 chars, A-Z, a-z, 0-9, symbol"
+                  placeholder={t("auth.passwordHint")}
                   required
                 />
                 {isSignUp && (
                   <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
-                    * 10자 이상, 대/소문자, 숫자, 특수문자 조합
+                    * {t("auth.passwordHint")}
                   </p>
                 )}
               </div>
@@ -169,7 +171,7 @@ export default function Auth({ onClose }) {
               {isSignUp && (
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Confirm Password
+                    {t("auth.confirmPassword")}
                   </label>
                   <input
                     type="password"
@@ -180,11 +182,11 @@ export default function Auth({ onClose }) {
                         ? "border-red-500 focus:ring-red-500" 
                         : "border-slate-200 dark:border-slate-800 focus:ring-primary"
                     }`}
-                    placeholder="Confirm your password"
+                    placeholder={t("auth.confirmPassword")}
                     required
                   />
                   {confirmPassword && password !== confirmPassword && (
-                    <p className="mt-1 text-xs text-red-500">비밀번호가 일치하지 않습니다.</p>
+                    <p className="mt-1 text-xs text-red-500">{t("auth.passwordMismatch")}</p>
                   )}
                 </div>
               )}
@@ -196,12 +198,12 @@ export default function Auth({ onClose }) {
             className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50"
           >
             {loading
-              ? "Processing..."
+              ? t("auth.processing")
               : isForgotPassword
-                ? "Send Reset Link"
+                ? t("auth.sendReset")
                 : isSignUp
-                  ? "Sign Up"
-                  : "Log In"}
+                  ? t("auth.signup")
+                  : t("auth.login")}
           </button>
         </form>
 
@@ -211,7 +213,7 @@ export default function Auth({ onClose }) {
               onClick={() => setIsForgotPassword(true)}
               className="text-sm text-slate-500 hover:text-primary font-medium"
             >
-              Forgot your password?
+              {t("auth.forgotPassword")}
             </button>
           )}
           <button
@@ -223,10 +225,10 @@ export default function Auth({ onClose }) {
             className="text-sm text-primary hover:underline font-medium"
           >
             {isForgotPassword
-              ? "Back to Login"
+              ? t("auth.backToLogin")
               : isSignUp
-                ? "Already have an account? Log In"
-                : "Don't have an account? Sign Up"}
+                ? t("auth.hasAccount")
+                : t("auth.noAccount")}
           </button>
         </div>
       </div>

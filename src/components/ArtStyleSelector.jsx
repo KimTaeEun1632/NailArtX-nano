@@ -1,6 +1,8 @@
 import { ART_STYLES } from "../constants/artStyles";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const ArtStyleSelector = ({ artStyles, setArtStyles }) => {
+  const { t } = useLanguage();
   const toggleStyle = (key) => {
     setArtStyles((prev) =>
       prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key],
@@ -10,7 +12,7 @@ const ArtStyleSelector = ({ artStyles, setArtStyles }) => {
   return (
     <div className="bg-white dark:bg-surface-dark p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
       <h3 className="text-[12px] font-bold uppercase tracking-widest text-slate-400 mb-3">
-        Art Techniques
+        {t("generate.sidebar.artTechniques")}
       </h3>
 
       <div className="flex flex-wrap gap-2">
@@ -28,14 +30,14 @@ const ArtStyleSelector = ({ artStyles, setArtStyles }) => {
                     : "bg-slate-100 dark:bg-surface-light-dark border-transparent hover:border-primary/20 hover:text-primary"
                 }`}
             >
-              {s.label}
+              {t(s.label)}
             </button>
           );
         })}
       </div>
       {artStyles.length >= 4 && (
         <p className="mt-2 text-[10px] text-amber-600 dark:text-amber-400">
-          너무 많은 스타일을 선택하면 디자인이 복잡해질 수 있어요!
+          {t("generate.sidebar.artStylesList.warning")}
         </p>
       )}
     </div>
