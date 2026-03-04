@@ -161,11 +161,14 @@ const MyPage = () => {
         {/* 계정 관리 섹션 */}
         <section className="pt-8 border-t border-slate-100 dark:border-slate-800">
           <h2 className="text-xl font-bold mb-4 text-red-500">{t("mypage.dangerZone")}</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">
-            {t("mypage.deleteDesc")}
-            <br />
-            {t("mypage.deleteConfirmHint").replace("{confirmText}", <span className="font-bold text-red-500">{t("mypage.confirmDeleteInput")}</span>)}
-          </p>
+          <div className="text-slate-500 dark:text-slate-400 text-sm mb-6">
+            <p className="mb-2">{t("mypage.deleteDesc")}</p>
+            <p>
+              {t("mypage.deleteConfirmHint").split("{confirmText}")[0]}
+              <span className="font-bold text-red-500 mx-1">{t("mypage.confirmDeleteInput")}</span>
+              {t("mypage.deleteConfirmHint").split("{confirmText}")[1]}
+            </p>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
             <input
