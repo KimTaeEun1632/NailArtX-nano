@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { supabase } from "./supabase";
 import GeneratorLayout from "./components/layout/GeneratorLayout";
 import Sidebar from "./components/Sidebar";
 import { buildPrompt } from "./utils/buildPrompt";
@@ -12,32 +13,48 @@ const API_URL = "/api/generate";
 export default function Generate() {
   const { t } = useLanguage();
   const [searchParams] = useSearchParams();
-  const [orderId, setOrderId] = useState(localStorage.getItem("pro_order_id"));
-  const [isPro, setIsPro] = useState(!!localStorage.getItem("pro_order_id"));
-  const [usageCount, setUsageCount] = useState(() => {
-    const saved = localStorage.getItem("nailart_usage_count");
-    const lastReset = localStorage.getItem("nailart_usage_reset_date");
-    const now = new Date();
+  const [orderId, setOrderId] = useState(null);
+  const [isPro, setIsPro] = useState(false);
+  const [usageCount, setUsageCount] = useState(0);
 
-    // Reset count if it's a new month
-    if (lastReset) {
-      const resetDate = new Date(lastReset);
-      if (
-        now.getMonth() !== resetDate.getMonth() ||
-        now.getFullYear() !== resetDate.getFullYear()
-      ) {
-        localStorage.setItem("nailart_usage_count", "0");
-        localStorage.setItem("nailart_usage_reset_date", now.toISOString());
-        return 0;
+  // DB에서 프로필 정보 로드
+  useEffect(() => {
+    const loadProfile = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .single();
+
+      if (profile) {
+        setIsPro(profile.is_pro);
+        setUsageCount(profile.usage_count);
+
+        // 월간 초기화 로직 (DB 기반)
+        const now = new Date();
+        const lastReset = new Date(profile.last_reset_date);
+        if (
+          now.getMonth() !== lastReset.getMonth() ||
+          now.getFullYear() !== lastReset.getFullYear()
+        ) {
+          const { data: updatedProfile } = await supabase
+            .from("profiles")
+            .update({ usage_count: 0, last_reset_date: now.toISOString() })
+            .eq("id", user.id)
+            .select()
+            .single();
+          if (updatedProfile) {
+            setUsageCount(0);
+          }
+        }
       }
-    } else {
-      localStorage.setItem("nailart_usage_reset_date", now.toISOString());
-    }
+    };
+    loadProfile();
+  }, []);
 
-    return saved ? parseInt(saved) : 0;
-  });
-
-  // Existing states restored
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [img, setImg] = useState(null);
@@ -54,10 +71,17 @@ export default function Generate() {
       try {
         const res = await axios.post("/api/verify", { checkoutId });
         if (res.data.success) {
-          setIsPro(true);
-          setOrderId(res.data.orderId);
-          localStorage.setItem("pro_order_id", res.data.orderId);
-          alert(t("generate.alerts.paymentVerified"));
+          const { data: { user } } = await supabase.auth.getUser();
+          if (user) {
+            await supabase
+              .from("profiles")
+              .update({ is_pro: true })
+              .eq("id", user.id);
+            setIsPro(true);
+            setOrderId(res.data.orderId);
+            localStorage.setItem("pro_order_id", res.data.orderId);
+            alert(t("generate.alerts.paymentVerified"));
+          }
         }
       } catch (err) {
         console.error("Verification failed", err);
@@ -74,16 +98,24 @@ export default function Generate() {
   }, [searchParams, verifyPayment]);
 
   async function handleRefund() {
-    if (!orderId) return;
+    const currentOrderId = orderId || localStorage.getItem("pro_order_id");
+    if (!currentOrderId) return;
     if (!window.confirm(t("generate.alerts.refundConfirm"))) return;
 
     try {
-      const res = await axios.post("/api/refund", { orderId });
+      const res = await axios.post("/api/refund", { orderId: currentOrderId });
       if (res.data.id) {
-        setIsPro(false);
-        setOrderId(null);
-        localStorage.removeItem("pro_order_id");
-        alert(t("generate.alerts.refundSuccess"));
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await supabase
+            .from("profiles")
+            .update({ is_pro: false })
+            .eq("id", user.id);
+          setIsPro(false);
+          setOrderId(null);
+          localStorage.removeItem("pro_order_id");
+          alert(t("generate.alerts.refundSuccess"));
+        }
       }
     } catch (err) {
       console.error("Refund failed", err);
@@ -115,7 +147,6 @@ export default function Generate() {
         shape,
         length,
       });
-      console.log("Prompt:", prompt);
 
       const response = await axios.post(
         API_URL,
@@ -135,7 +166,17 @@ export default function Generate() {
       });
 
       setImg(dataUrl);
-      setUsageCount((prev) => prev + 1);
+
+      // DB 사용량 업데이트
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const newCount = usageCount + 1;
+        await supabase
+          .from("profiles")
+          .update({ usage_count: newCount })
+          .eq("id", user.id);
+        setUsageCount(newCount);
+      }
     } catch (err) {
       if (err.response?.data instanceof ArrayBuffer) {
         const text = new TextDecoder().decode(err.response.data);
