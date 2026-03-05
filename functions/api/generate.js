@@ -5,7 +5,7 @@ export const onRequestPost = async (context) => {
     const { request, env } = context;
     const { prompt } = await request.json();
 
-    // 1. Supabase 인증 확인 (유저 세션 확인)
+    // 1. Supabase 인증 확인
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
@@ -18,7 +18,7 @@ export const onRequestPost = async (context) => {
       return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401 });
     }
 
-    // 2. DB에서 실제 Pro 상태와 사용량 조회
+    // 2. DB에서 프로필 정보 조회
     const { data: profile } = await supabase
       .from("profiles")
       .select("*")
@@ -31,10 +31,15 @@ export const onRequestPost = async (context) => {
 
     const isPro = profile.is_pro;
     const usageCount = profile.usage_count;
+    
+    // 모델 및 제한 설정
     const limit = isPro ? 80 : 5;
+    const modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
 
     if (usageCount >= limit) {
-      return new Response(JSON.stringify({ error: "Limit reached" }), { status: 403 });
+      return new Response(JSON.stringify({ 
+        error: isPro ? "Monthly limit reached (80/80)" : "Free limit reached (5/5). Please upgrade to Pro!" 
+      }), { status: 403 });
     }
 
     if (!prompt) {
@@ -43,12 +48,14 @@ export const onRequestPost = async (context) => {
 
     let finalPrompt = prompt;
     if (!isPro) {
+      // 무료 사용자는 워터마크 추가 유도
       finalPrompt = `${prompt}. Important: Please include a small, elegant 'NailArtX' text watermark at the bottom right corner of the image.`;
     }
 
-    // Gemini API 호출 (기존 로직 유지)
+    // 3. Gemini API 호출 (사용자 제공 모델 및 설정 반영)
+    const apiVersion = "v1beta";
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent",
+      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
       {
         method: "POST",
         headers: {
@@ -57,14 +64,17 @@ export const onRequestPost = async (context) => {
         },
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-          generationConfig: { responseModalities: ["IMAGE"] },
+          generationConfig: {
+            responseModalities: ["IMAGE"],
+          },
         }),
       },
     );
 
     if (!response.ok) {
-      const errorText = await response.text();
-      return new Response(errorText, { status: response.status });
+      const errorData = await response.json();
+      console.error("Gemini API Error:", JSON.stringify(errorData));
+      return new Response(JSON.stringify({ error: "AI Generation failed", detail: errorData }), { status: response.status });
     }
 
     const data = await response.json();
@@ -72,13 +82,13 @@ export const onRequestPost = async (context) => {
     const imagePart = parts.find((p) => p.inlineData);
 
     if (!imagePart) {
-      return new Response(JSON.stringify({ error: "No image returned" }), { status: 500 });
+      return new Response(JSON.stringify({ error: "No image data in AI response", raw: data }), { status: 500 });
     }
 
     const { data: base64, mimeType } = imagePart.inlineData;
     const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
-    // 3. 사용량 업데이트 (서버에서 직접)
+    // 4. 사용량 업데이트
     await supabase
       .from("profiles")
       .update({ usage_count: usageCount + 1 })
@@ -88,6 +98,7 @@ export const onRequestPost = async (context) => {
       headers: { "Content-Type": mimeType ?? "image/png" },
     });
   } catch (err) {
+    console.error("Internal Server Error:", err);
     return new Response(JSON.stringify({ error: "Generation failed", detail: String(err) }), { status: 500 });
   }
 };
