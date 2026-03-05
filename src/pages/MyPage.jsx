@@ -107,7 +107,6 @@ const MyPage = () => {
       const orgSlug = "kimtaeeun1632s-org";
       const portalUrl = `https://polar.sh/${orgSlug}/portal/overview?customer_session_token=${token}&email=${encodeURIComponent(user.email)}`;
 
-      console.log("Redirecting to Polar Portal:", portalUrl);
       window.open(portalUrl, "_blank");
     } catch (err) {
       console.error("Portal access error:", err);

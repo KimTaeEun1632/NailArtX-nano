@@ -23,11 +23,24 @@ export default function Generate() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data: profile } = await supabase
+      let { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user.id)
         .single();
+
+      // 프로필이 없는 경우 (기존 유저 등) 생성 시도
+      if (error && error.code === "PGRST116") {
+        const { data: newProfile, error: insertError } = await supabase
+          .from("profiles")
+          .insert([{ id: user.id, email: user.email }])
+          .select()
+          .single();
+        
+        if (!insertError) {
+          profile = newProfile;
+        }
+      }
 
       if (profile) {
         setIsPro(profile.is_pro);
@@ -148,10 +161,17 @@ export default function Generate() {
         length,
       });
 
+      const { data: { session } } = await supabase.auth.getSession();
       const response = await axios.post(
         API_URL,
         { prompt, level, isPro, usageCount },
-        { responseType: "arraybuffer", transformResponse: [] },
+        { 
+          responseType: "arraybuffer", 
+          transformResponse: [],
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`
+          }
+        },
       );
 
       const blob = new Blob([response.data], {
