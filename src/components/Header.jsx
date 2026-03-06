@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../supabase";
 import Auth from "./Auth";
 import LightMoon from "../assets/lightMoon.svg";
@@ -13,6 +13,7 @@ const Header = ({ dark, setDark }) => {
   const [showAuth, setShowAuth] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -36,6 +37,17 @@ const Header = ({ dark, setDark }) => {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("auth") === "true") {
+      // Use setTimeout to move the state update out of the synchronous execution of the effect
+      const timer = setTimeout(() => {
+        setShowAuth(true);
+        navigate(location.pathname, { replace: true });
+      }, 0);
+      return () => clearTimeout(timer);
+    }
+  }, [location.search, navigate, location.pathname]);
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsMenuOpen(false);
@@ -43,6 +55,32 @@ const Header = ({ dark, setDark }) => {
   };
 
   const closeMenu = () => setIsMenuOpen(false);
+
+  const handleCheckout = async () => {
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server error:", errorText);
+        alert(`Error: ${response.status}`);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error("Checkout error:", err);
+    }
+  };
 
   return (
     <>
@@ -92,7 +130,11 @@ const Header = ({ dark, setDark }) => {
               >
                 <span className="material-symbols-outlined flex items-center justify-center">
                   {dark ? (
-                    <img src={LightMoon} alt="dark-mood" className="w-5 h-5"></img>
+                    <img
+                      src={LightMoon}
+                      alt="dark-mood"
+                      className="w-5 h-5"
+                    ></img>
                   ) : (
                     <img src={DarkMoon} alt="white-mood" className="w-5 h-5" />
                   )}
@@ -102,70 +144,71 @@ const Header = ({ dark, setDark }) => {
           </nav>
           <div className="flex items-center gap-2">
             {session ? (
-              <>
+              <div className="flex items-center gap-4">
                 <button
-                  onClick={async () => {
-                    try {
-                      const response = await fetch("/api/checkout", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
-                        }),
-                      });
-
-                      if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error("Server error:", errorText);
-                        alert(
-                          `Error: ${response.status}. Make sure you are using the Wrangler port (usually 8788).`,
-                        );
-                        return;
-                      }
-
-                      const data = await response.json();
-                      if (data.url) {
-                        window.location.href = data.url;
-                      } else {
-                        alert("Failed to start checkout. Please try again.");
-                      }
-                    } catch (err) {
-                      console.error("Checkout error:", err);
-                      alert(
-                        "An error occurred. Check the console for details.",
-                      );
-                    }
-                  }}
+                  onClick={handleCheckout}
                   className="flex items-center justify-center h-10 px-6 rounded-xl border border-primary text-primary font-bold hover:bg-primary/5 transition-colors"
                 >
                   {t("header.goPro")}
                 </button>
-                <Link
-                  to="/mypage"
-                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
-                >
-                  {t("header.profile")}
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4 flex items-center h-10"
-                >
-                  {t("header.logout")}
-                </button>
-                <Link
-                  to="/generate"
-                  className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark"
-                >
-                  {t("header.startDesigning")}
-                </Link>
-              </>
+                <div className="relative group">
+                  <button className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold overflow-hidden border-2 border-transparent hover:border-primary transition-all">
+                    {session.user.user_metadata?.avatar_url ? (
+                      <img
+                        src={session.user.user_metadata.avatar_url}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>
+                        {(session.user.email?.[0] || "U").toUpperCase()}
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <div className="absolute right-0 mt-2 w-48 py-2 bg-white dark:bg-surface-dark rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                    <div className="px-4 py-2 border-b border-slate-50 dark:border-slate-800 mb-1">
+                      <p className="text-xs text-slate-400 truncate">
+                        {session.user.email}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleCheckout}
+                      className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
+                    >
+                      {t("header.goPro")}
+                    </button>
+                    <Link
+                      to="/mypage"
+                      className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                    >
+                      {t("header.profile")}
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors"
+                    >
+                      {t("header.logout")}
+                    </button>
+                  </div>
+                </div>
+              </div>
             ) : (
-              <button
-                onClick={() => setShowAuth(true)}
-                className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark"
-              >
-                {t("header.getStarted")}
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4"
+                >
+                  {t("auth.login")}
+                </button>
+                <button
+                  onClick={() => setShowAuth(true)}
+                  className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all"
+                >
+                  {t("header.getStarted")}
+                </button>
+              </div>
             )}
           </div>
         </div>
@@ -261,30 +304,8 @@ const Header = ({ dark, setDark }) => {
               <>
                 <button
                   onClick={async () => {
-                    try {
-                      setIsMenuOpen(false);
-                      const response = await fetch("/api/checkout", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
-                        }),
-                      });
-
-                      if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error("Server error:", errorText);
-                        alert(`Error: ${response.status}`);
-                        return;
-                      }
-
-                      const data = await response.json();
-                      if (data.url) {
-                        window.location.href = data.url;
-                      }
-                    } catch (err) {
-                      console.error("Checkout error:", err);
-                    }
+                    closeMenu();
+                    handleCheckout();
                   }}
                   className="flex items-center justify-center h-12 rounded-xl border border-primary text-primary font-bold"
                 >
@@ -303,13 +324,6 @@ const Header = ({ dark, setDark }) => {
                 >
                   {t("header.logout")}
                 </button>
-                <Link
-                  to="/generate"
-                  onClick={closeMenu}
-                  className="flex items-center justify-center h-12 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20"
-                >
-                  {t("header.startDesigning")}
-                </Link>
               </>
             ) : (
               <button
