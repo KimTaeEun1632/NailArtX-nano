@@ -86,14 +86,22 @@ export default function Generate() {
         if (res.data.success) {
           const { data: { user } } = await supabase.auth.getUser();
           if (user) {
-            await supabase
+            const { error: updateError } = await supabase
               .from("profiles")
-              .update({ is_pro: true })
+              .update({ 
+                is_pro: true,
+                polar_customer_id: res.data.customerId // Polar ID 저장
+              })
               .eq("id", user.id);
-            setIsPro(true);
-            setOrderId(res.data.orderId);
-            localStorage.setItem("pro_order_id", res.data.orderId);
-            alert(t("generate.alerts.paymentVerified"));
+            
+            if (updateError) {
+              console.error("DB Update Error:", updateError);
+            } else {
+              setIsPro(true);
+              setOrderId(res.data.orderId);
+              localStorage.setItem("pro_order_id", res.data.orderId);
+              alert(t("generate.alerts.paymentVerified"));
+            }
           }
         }
       } catch (err) {

@@ -3,7 +3,7 @@ const POLAR_API_BASE = "https://api.polar.sh/v1";
 export const onRequestPost = async (context) => {
   try {
     const { env, request } = context;
-    const { productId } = await request.json();
+    const { productId, userId } = await request.json();
 
     if (!productId) {
       return new Response(JSON.stringify({ error: "Product ID is required" }), {
@@ -27,11 +27,17 @@ export const onRequestPost = async (context) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${polarToken}`,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json" 
       },
       body: JSON.stringify({
         products: [productId],
         success_url: `${origin}/generate?checkout_id={CHECKOUT_ID}`,
+        metadata: {
+          supabase_user_id: userId,
+        },
+        customer_metadata: {
+          supabase_user_id: userId,
+        },
       }),
     });
 

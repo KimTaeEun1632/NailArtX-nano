@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT,
   is_pro BOOLEAN DEFAULT FALSE,
+  polar_customer_id TEXT, -- Polar 내부 Customer ID 저장용
   usage_count INTEGER DEFAULT 0,
   last_reset_date TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

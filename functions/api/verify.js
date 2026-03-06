@@ -32,6 +32,7 @@ export const onRequestPost = async (context) => {
           success: true,
           orderId: data.order_id,
           email: data.customer_email,
+          customerId: data.customer_id, // Polar 내부 ID 추가
         }),
         { headers: { "Content-Type": "application/json" } },
       );

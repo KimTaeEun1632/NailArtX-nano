@@ -70,6 +70,7 @@ const Header = ({ dark, setDark }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           productId: "bceb13a3-9999-438c-928c-e3935fcdb67e",
+          userId: session?.user?.id,
         }),
       });
 
