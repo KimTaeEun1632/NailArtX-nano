@@ -106,14 +106,30 @@ function Step({ step, title, desc, example, isMiddle, success, img }) {
 
         {success && (
           <div>
-            <img src={step3} alt="Save & Replicate" />
+            <img 
+              src={step3} 
+              alt="Save & Replicate" 
+              width="300" 
+              height="200" 
+              loading="lazy"
+              decoding="async"
+            />
             <div className="absolute top-4 right-4 bg-green-500 text-white p-1 rounded-full shadow-md">
               <CheckIcon />
             </div>
           </div>
         )}
 
-        {img && <img src={img} alt="step one Input your idea" />}
+        {img && (
+          <img 
+            src={img} 
+            alt="step one Input your idea" 
+            width="300" 
+            height="200" 
+            loading="lazy"
+            decoding="async"
+          />
+        )}
       </div>
 
       {/* Step Number */}

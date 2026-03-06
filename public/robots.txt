@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://nailartx-nano.pages.dev/sitemap.xml

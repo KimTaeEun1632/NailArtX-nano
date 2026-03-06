@@ -251,6 +251,7 @@ const Header = ({ dark, setDark }) => {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 text-slate-600 dark:text-slate-300"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMenuOpen ? (
               <svg
