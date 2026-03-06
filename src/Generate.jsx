@@ -20,7 +20,9 @@ export default function Generate() {
   // DB에서 프로필 정보 로드
   useEffect(() => {
     const loadProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       let { data: profile, error } = await supabase
@@ -36,7 +38,7 @@ export default function Generate() {
           .insert([{ id: user.id, email: user.email }])
           .select()
           .single();
-        
+
         if (!insertError) {
           profile = newProfile;
         }
@@ -84,16 +86,33 @@ export default function Generate() {
       try {
         const res = await axios.post("/api/verify", { checkoutId });
         if (res.data.success) {
-          const { data: { user } } = await supabase.auth.getUser();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
           if (user) {
+            // GA4 Purchase Event
+            if (window.gtag) {
+              window.gtag("event", "purchase", {
+                transaction_id: res.data.orderId || checkoutId,
+                value: 14.99, // 실제 가격으로 조정 필요
+                currency: "USD",
+                items: [
+                  {
+                    item_id: "pro_subscription",
+                    item_name: "Pro Subscription",
+                  },
+                ],
+              });
+            }
+
             const { error: updateError } = await supabase
               .from("profiles")
-              .update({ 
+              .update({
                 is_pro: true,
-                polar_customer_id: res.data.customerId // Polar ID 저장
+                polar_customer_id: res.data.customerId, // Polar ID 저장
               })
               .eq("id", user.id);
-            
+
             if (updateError) {
               console.error("DB Update Error:", updateError);
             } else {
@@ -126,7 +145,9 @@ export default function Generate() {
     try {
       const res = await axios.post("/api/refund", { orderId: currentOrderId });
       if (res.data.id) {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           await supabase
             .from("profiles")
@@ -169,16 +190,18 @@ export default function Generate() {
         length,
       });
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const response = await axios.post(
         API_URL,
         { prompt, level, isPro, usageCount },
-        { 
-          responseType: "arraybuffer", 
+        {
+          responseType: "arraybuffer",
           transformResponse: [],
           headers: {
-            Authorization: `Bearer ${session?.access_token}`
-          }
+            Authorization: `Bearer ${session?.access_token}`,
+          },
         },
       );
 
@@ -195,8 +218,19 @@ export default function Generate() {
 
       setImg(dataUrl);
 
+      // GA4 Generate Success Event
+      if (window.gtag) {
+        window.gtag("event", "generate_success", {
+          level: level,
+          styles_count: artStyles.length,
+          is_pro: isPro,
+        });
+      }
+
       // DB 사용량 업데이트
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (user) {
         const newCount = usageCount + 1;
         await supabase

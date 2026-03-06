@@ -4,6 +4,13 @@ import { useLanguage } from "../contexts/LanguageContext";
 const ArtStyleSelector = ({ artStyles, setArtStyles }) => {
   const { t } = useLanguage();
   const toggleStyle = (key) => {
+    const isAdding = !artStyles?.includes(key);
+    if (isAdding && window.gtag) {
+      window.gtag("event", "select_content", {
+        content_type: "nail_style",
+        item_id: key,
+      });
+    }
     setArtStyles((prev) =>
       prev.includes(key) ? prev.filter((s) => s !== key) : [...prev, key],
     );
