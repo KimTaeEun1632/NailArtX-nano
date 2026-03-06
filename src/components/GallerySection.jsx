@@ -31,6 +31,10 @@ export default function GallerySection() {
               <img
                 src={item.src}
                 alt={item.title}
+                loading="lazy"
+                decoding="async"
+                width="300"
+                height="400"
                 className="w-full h-auto object-cover transition duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">

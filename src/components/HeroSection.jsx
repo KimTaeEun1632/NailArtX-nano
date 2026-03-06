@@ -55,21 +55,48 @@ const HeroSection = () => {
         <div className="lg:w-1/2 grid grid-cols-2 gap-4 relative z-10">
           <div className="space-y-4 pt-12">
             <div className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
-              <img className="w-full h-full object-cover" src="/그라34.jpeg" />
+              <img 
+                className="w-full h-full object-cover" 
+                src="/그라34.jpeg" 
+                alt="Nail Art Design 1"
+                fetchpriority="high"
+                width="300"
+                height="400"
+                decoding="async"
+              />
             </div>
             <div className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
-              <img className="w-full h-full object-cover" src="/산타11.jpeg" />
+              <img 
+                className="w-full h-full object-cover" 
+                src="/산타11.jpeg" 
+                alt="Santa Nail Art"
+                width="300"
+                height="300"
+                decoding="async"
+              />
             </div>
           </div>
           <div className="space-y-4">
-            <img
-              className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]"
-              src="/대리석11.jpeg"
-            />
-            <img
-              className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]"
-              src="/벚꽃34.jpeg"
-            />
+            <div className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
+              <img
+                className="w-full h-full object-cover"
+                src="/대리석11.jpeg"
+                alt="Marble Nail Art"
+                width="300"
+                height="300"
+                decoding="async"
+              />
+            </div>
+            <div className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
+              <img
+                className="w-full h-full object-cover"
+                src="/벚꽃34.jpeg"
+                alt="Cherry Blossom Nail Art"
+                width="300"
+                height="400"
+                decoding="async"
+              />
+            </div>
           </div>
         </div>
       </div>

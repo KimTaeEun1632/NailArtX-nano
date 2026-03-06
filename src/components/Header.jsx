@@ -134,22 +134,32 @@ const Header = ({ dark, setDark }) => {
                 onClick={toggleLanguage}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors uppercase"
                 title={lang === "ko" ? "Switch to English" : "한국어로 변경"}
+                aria-label={lang === "ko" ? "Switch to English" : "한국어로 변경"}
               >
                 {lang === "ko" ? "EN" : "KO"}
               </button>
               <button
                 onClick={() => setDark(!dark)}
                 className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-200/60 dark:bg-slate-800/60 dark:border "
+                aria-label={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
               >
                 <span className="material-symbols-outlined flex items-center justify-center">
                   {dark ? (
                     <img
                       src={LightMoon}
-                      alt="dark-mood"
+                      alt="light mode icon"
                       className="w-5 h-5"
+                      width="20"
+                      height="20"
                     ></img>
                   ) : (
-                    <img src={DarkMoon} alt="white-mood" className="w-5 h-5" />
+                    <img 
+                      src={DarkMoon} 
+                      alt="dark mode icon" 
+                      className="w-5 h-5" 
+                      width="20"
+                      height="20"
+                    />
                   )}
                 </span>
               </button>
