@@ -1,14 +1,16 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import { useLanguage } from "../contexts/LanguageContext";
 
-export default function Auth({ onClose }) {
+export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const validatePassword = (pw) => {
@@ -49,6 +51,10 @@ export default function Auth({ onClose }) {
           password,
         });
         if (error) throw error;
+        
+        if (returnUrl) {
+          navigate(returnUrl);
+        }
         onClose();
       }
     } catch (error) {
@@ -61,10 +67,14 @@ export default function Auth({ onClose }) {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
+      const redirectTo = returnUrl 
+        ? `${window.location.origin}${returnUrl}`
+        : window.location.origin;
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo,
         },
       });
       if (error) throw error;

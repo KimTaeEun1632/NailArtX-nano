@@ -11,6 +11,8 @@ const Header = ({ dark, setDark }) => {
   const { lang, toggleLanguage, t } = useLanguage();
   const [session, setSession] = useState(null);
   const [showAuth, setShowAuth] = useState(false);
+  const [authInitialIsSignUp, setAuthInitialIsSignUp] = useState(false);
+  const [returnUrl, setReturnUrl] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -40,14 +42,19 @@ const Header = ({ dark, setDark }) => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get("auth") === "true") {
+      const from = location.state?.from?.pathname;
+
       // Use setTimeout to move the state update out of the synchronous execution of the effect
       const timer = setTimeout(() => {
+        if (from) setReturnUrl(from);
+        setAuthInitialIsSignUp(false); // Default to login when redirected from protected route
         setShowAuth(true);
         navigate(location.pathname, { replace: true });
       }, 0);
       return () => clearTimeout(timer);
     }
-  }, [location.search, navigate, location.pathname]);
+  }, [location.search, navigate, location.pathname, location.state]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setIsMenuOpen(false);
@@ -82,9 +89,14 @@ const Header = ({ dark, setDark }) => {
     }
   };
 
+  const openAuth = (isSignUp = false) => {
+    setAuthInitialIsSignUp(isSignUp);
+    setShowAuth(true);
+  };
+
   return (
     <>
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] dark:text-white bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
+      <header className="sticky top-0 z-[100] flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] dark:text-white bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
         <div className="flex items-center gap-4">
           <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
             <BrushIcon />
@@ -197,16 +209,10 @@ const Header = ({ dark, setDark }) => {
             ) : (
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setShowAuth(true)}
-                  className="text-sm font-bold text-slate-500 hover:text-slate-700 px-4"
+                  onClick={() => openAuth(false)}
+                  className="flex items-center justify-center h-10 px-8 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all"
                 >
                   {t("auth.login")}
-                </button>
-                <button
-                  onClick={() => setShowAuth(true)}
-                  className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all"
-                >
-                  {t("header.getStarted")}
                 </button>
               </div>
             )}
@@ -328,19 +334,25 @@ const Header = ({ dark, setDark }) => {
             ) : (
               <button
                 onClick={() => {
-                  setShowAuth(true);
+                  openAuth(false);
                   closeMenu();
                 }}
                 className="flex items-center justify-center h-12 rounded-xl bg-primary text-white font-bold shadow-lg shadow-primary/20"
               >
-                {t("header.getStarted")}
+                {t("auth.login")}
               </button>
             )}
           </div>
         </div>
       )}
 
-      {showAuth && <Auth onClose={() => setShowAuth(false)} />}
+      {showAuth && (
+        <Auth
+          onClose={() => setShowAuth(false)}
+          returnUrl={returnUrl}
+          initialIsSignUp={authInitialIsSignUp}
+        />
+      )}
     </>
   );
 };
