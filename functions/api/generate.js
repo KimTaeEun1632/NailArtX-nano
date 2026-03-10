@@ -1,8 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
 // 지수 백오프와 지터를 사용한 재시도 헬퍼 함수
-async function fetchWithRetry(url, options, maxRetries = 3) {
-  let lastError;
+async function fetchWithRetry(url, options, maxRetries = 2) {
   for (let i = 0; i < maxRetries; i++) {
     try {
       const response = await fetch(url, options);
@@ -16,13 +15,12 @@ async function fetchWithRetry(url, options, maxRetries = 3) {
       }
       
       return response;
-    } catch (err) {
-      lastError = err;
+    } catch {
       const waitTime = Math.pow(2, i) * 1000 + Math.random() * 1000;
       await new Promise(resolve => setTimeout(resolve, waitTime));
     }
   }
-  throw lastError || new Error("Max retries reached");
+  return null; // 모든 재시도 실패 시 null 반환
 }
 
 export const onRequestPost = async (context) => {
@@ -40,20 +38,15 @@ export const onRequestPost = async (context) => {
     const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Supabase environment variables (VITE_SUPABASE_URL/ANON_KEY) are missing in the server environment.");
+      throw new Error("Supabase environment variables missing.");
     }
 
     const accessToken = authHeader.replace("Bearer ", "");
     const supabase = createClient(supabaseUrl, supabaseKey, {
-      global: {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
     });
     
     const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
-
     if (authError || !user) {
       return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401 });
     }
@@ -71,11 +64,7 @@ export const onRequestPost = async (context) => {
 
     const isPro = profile.is_pro;
     const usageCount = profile.usage_count;
-    
-    // 모델 및 제한 설정
     const limit = isPro ? 80 : 5;
-    // 초기 시도 모델 (Pro 사용자는 Pro 모델, 무료 사용자는 Flash 모델)
-    let modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
 
     if (usageCount >= limit) {
       return new Response(JSON.stringify({ 
@@ -92,8 +81,10 @@ export const onRequestPost = async (context) => {
       finalPrompt = `${prompt}. Important: Please include a small, elegant 'NailArtX' text watermark at the bottom right corner of the image.`;
     }
 
-    // 3. Gemini API 호출 (재시도 및 폴백 로직 포함)
+    // 3. 메인 엔진 시도 (Gemini API)
     const apiVersion = "v1beta";
+    let modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
+    
     const apiOptions = {
       method: "POST",
       headers: {
@@ -102,9 +93,7 @@ export const onRequestPost = async (context) => {
       },
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-        generationConfig: {
-          responseModalities: ["IMAGE"],
-        },
+        generationConfig: { responseModalities: ["IMAGE"] },
       }),
     };
 
@@ -113,9 +102,9 @@ export const onRequestPost = async (context) => {
       apiOptions
     );
 
-    // Pro 모델이 여전히 503 또는 에러인 경우 Flash 모델로 폴백 시도
-    if (!response.ok && isPro && (response.status === 503 || response.status === 500)) {
-      console.warn("Pro model failed, attempting fallback to Flash model...");
+    // Pro 모델 실패 시 Flash 모델로 폴백
+    if ((!response || !response.ok) && isPro) {
+      console.warn("Gemini Pro failed, attempting Gemini Flash fallback...");
       modelName = "gemini-2.5-flash-image";
       response = await fetchWithRetry(
         `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
@@ -123,32 +112,61 @@ export const onRequestPost = async (context) => {
       );
     }
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Gemini API Final Error:", JSON.stringify(errorData));
-      return new Response(JSON.stringify({ error: "AI Generation failed after retries", detail: errorData }), { status: response.status });
+    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI - SDXL)
+    // 구글 API가 완전히 응답하지 않거나 에러인 경우 실행
+    if (!response || !response.ok) {
+      console.error("All Gemini attempts failed. Activating Cloudflare Workers AI Fallback...");
+      
+      if (env.AI) {
+        try {
+          // SDXL 모델에 최적화된 프롬프트 튜닝 (네일아트 특화 키워드 추가)
+          const sdxlPrompt = `(hyper-realistic nail art:1.2), macro photography of a hand with decorated nails, 8k resolution, professional studio lighting, focus on nails, ${finalPrompt}`;
+          
+          const aiResponse = await env.AI.run('@cf/stabilityai/stable-diffusion-xl-base-1.0', {
+            prompt: sdxlPrompt,
+            num_steps: 25, // 퀄리티와 속도의 균형
+          });
+
+          // Cloudflare AI는 이미지를 Uint8Array 또는 Stream 형태로 반환합니다.
+          const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
+
+          // 사용량 업데이트 (백업 생성도 횟수에 포함)
+          await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+
+          return new Response(imageBuffer, {
+            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI" },
+          });
+        } catch (aiErr) {
+          console.error("Cloudflare AI Fallback also failed:", aiErr);
+        }
+      } else {
+        console.warn("Cloudflare AI binding not found. Skipping fallback.");
+      }
     }
 
-    const data = await response.json();
-    const parts = data?.candidates?.[0]?.content?.parts ?? [];
-    const imagePart = parts.find((p) => p.inlineData);
+    // Gemini 응답 처리 (성공한 경우)
+    if (response && response.ok) {
+      const data = await response.json();
+      const parts = data?.candidates?.[0]?.content?.parts ?? [];
+      const imagePart = parts.find((p) => p.inlineData);
 
-    if (!imagePart) {
-      return new Response(JSON.stringify({ error: "No image data in AI response", raw: data }), { status: 500 });
+      if (imagePart) {
+        const { data: base64, mimeType } = imagePart.inlineData;
+        const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+
+        await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+
+        return new Response(imageBuffer, {
+          headers: { "Content-Type": mimeType ?? "image/png", "X-Engine": "Gemini" },
+        });
+      }
     }
 
-    const { data: base64, mimeType } = imagePart.inlineData;
-    const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+    // 모든 시도가 실패한 경우
+    return new Response(JSON.stringify({ 
+      error: "Service temporarily unavailable. Our AI engines are currently under heavy load. Please try again in a few minutes." 
+    }), { status: 503 });
 
-    // 4. 사용량 업데이트
-    await supabase
-      .from("profiles")
-      .update({ usage_count: usageCount + 1 })
-      .eq("id", user.id);
-
-    return new Response(imageBuffer, {
-      headers: { "Content-Type": mimeType ?? "image/png" },
-    });
   } catch (err) {
     console.error("Internal Server Error:", err);
     return new Response(JSON.stringify({ error: "Generation failed", detail: String(err) }), { status: 500 });
