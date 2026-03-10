@@ -1,5 +1,30 @@
 import { createClient } from "@supabase/supabase-js";
 
+// 지수 백오프와 지터를 사용한 재시도 헬퍼 함수
+async function fetchWithRetry(url, options, maxRetries = 3) {
+  let lastError;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      
+      // 503 (Service Unavailable) 또는 429 (Too Many Requests)인 경우 재시도
+      if (response.status === 503 || response.status === 429) {
+        const waitTime = Math.pow(2, i) * 1000 + Math.random() * 1000;
+        console.warn(`Gemini API returned ${response.status}. Retrying in ${Math.round(waitTime)}ms... (Attempt ${i + 1}/${maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
+        continue;
+      }
+      
+      return response;
+    } catch (err) {
+      lastError = err;
+      const waitTime = Math.pow(2, i) * 1000 + Math.random() * 1000;
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+  }
+  throw lastError || new Error("Max retries reached");
+}
+
 export const onRequestPost = async (context) => {
   try {
     const { request, env } = context;
@@ -49,7 +74,8 @@ export const onRequestPost = async (context) => {
     
     // 모델 및 제한 설정
     const limit = isPro ? 80 : 5;
-    const modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
+    // 초기 시도 모델 (Pro 사용자는 Pro 모델, 무료 사용자는 Flash 모델)
+    let modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
 
     if (usageCount >= limit) {
       return new Response(JSON.stringify({ 
@@ -63,33 +89,44 @@ export const onRequestPost = async (context) => {
 
     let finalPrompt = prompt;
     if (!isPro) {
-      // 무료 사용자는 워터마크 추가 유도
       finalPrompt = `${prompt}. Important: Please include a small, elegant 'NailArtX' text watermark at the bottom right corner of the image.`;
     }
 
-    // 3. Gemini API 호출 (사용자 제공 모델 및 설정 반영)
+    // 3. Gemini API 호출 (재시도 및 폴백 로직 포함)
     const apiVersion = "v1beta";
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": env.GEMINI_API_KEY,
-        },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-          generationConfig: {
-            responseModalities: ["IMAGE"],
-          },
-        }),
+    const apiOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": env.GEMINI_API_KEY,
       },
+      body: JSON.stringify({
+        contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
+        generationConfig: {
+          responseModalities: ["IMAGE"],
+        },
+      }),
+    };
+
+    let response = await fetchWithRetry(
+      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
+      apiOptions
     );
+
+    // Pro 모델이 여전히 503 또는 에러인 경우 Flash 모델로 폴백 시도
+    if (!response.ok && isPro && (response.status === 503 || response.status === 500)) {
+      console.warn("Pro model failed, attempting fallback to Flash model...");
+      modelName = "gemini-2.5-flash-image";
+      response = await fetchWithRetry(
+        `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
+        apiOptions
+      );
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error("Gemini API Error:", JSON.stringify(errorData));
-      return new Response(JSON.stringify({ error: "AI Generation failed", detail: errorData }), { status: response.status });
+      console.error("Gemini API Final Error:", JSON.stringify(errorData));
+      return new Response(JSON.stringify({ error: "AI Generation failed after retries", detail: errorData }), { status: response.status });
     }
 
     const data = await response.json();

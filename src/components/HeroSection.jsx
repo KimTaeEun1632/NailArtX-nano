@@ -59,7 +59,7 @@ const HeroSection = () => {
                 className="w-full h-full object-cover" 
                 src="/그라34.jpeg" 
                 alt="Nail Art Design 1"
-                fetchpriority="high"
+                fetchPriority="high"
                 width="300"
                 height="400"
                 decoding="async"

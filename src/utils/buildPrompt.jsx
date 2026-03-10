@@ -36,6 +36,19 @@ Photorealistic, 8k quality.
 `,
 };
 
+const PRO_SPEC_MAP = {
+  shapes: {
+    almond: "sculpted almond shape with a precise 1/3 back apex for structural integrity",
+    stiletto: "razor-sharp stiletto point with a balanced architectural apex",
+    ballerina: "modern ballerina silhouette with tapered sides and a flat squared-off edge",
+    coffin: "architectural coffin shape, perfectly sculpted with a high-definition C-curve",
+    square: "defined square edges with parallel sidewalls and a central apex for strength",
+  },
+  materials: "utilizing 2026 tech: 5D molding gel, plastiline textures, and builder gel overlays for hyper-realistic depth. High-gloss no-wipe top coat finish.",
+  lighting: "professional studio softbox lighting, macro photography showing subtle cuticle detail and healthy nail integrity.",
+  trends: "incorporating 2026 'Refined Intention' aesthetics: milky glazes, dusty tones, and depth-focused layering.",
+};
+
 export function buildPrompt({
   keyword,
   level,
@@ -44,10 +57,28 @@ export function buildPrompt({
   artStyles = [],
   shape,
   length,
+  isPro = false,
 }) {
   if (!keyword) return "";
 
-  let prompt = LEVEL_PROMPT_MAP[level || "salon"].replace("{{KEYWORD}}", keyword);
+  let baseTemplate = LEVEL_PROMPT_MAP[level || "salon"];
+  
+  if (isPro) {
+    baseTemplate = baseTemplate.replace(
+      "A realistic, high-resolution", 
+      "A masterpiece-level, hyper-realistic 8k"
+    ).replace(
+      "A high-quality, realistic",
+      "An award-winning, hyper-realistic 8k"
+    );
+  }
+
+  let prompt = baseTemplate.replace("{{KEYWORD}}", keyword);
+
+  /* Pro Specifications Injection */
+  if (isPro) {
+    prompt += `\n\nPRO TECHNICAL SPECS: ${PRO_SPEC_MAP.materials} ${PRO_SPEC_MAP.lighting} ${PRO_SPEC_MAP.trends}`;
+  }
 
   /* Quick Style */
   if (selectedQuickStyles.length > 0) {
@@ -71,11 +102,16 @@ export function buildPrompt({
 
   /* Shape / Length */
   if (shape || length) {
+    let shapeDesc = shape || "";
+    if (isPro && shape && PRO_SPEC_MAP.shapes[shape.toLowerCase()]) {
+      shapeDesc = PRO_SPEC_MAP.shapes[shape.toLowerCase()];
+    }
+    
     const shapeParts = [];
-    if (shape) shapeParts.push(shape);
+    if (shapeDesc) shapeParts.push(shapeDesc);
     if (length) shapeParts.push(length);
 
-    prompt += `\n\nNail shape and length: ${shapeParts.join(", ")}.`;
+    prompt += `\n\nNail architecture: ${shapeParts.join(", ")}.`;
   }
 
   /* Art Styles (Techniques) */
@@ -85,10 +121,14 @@ export function buildPrompt({
       .filter(Boolean)
       .join(", ");
 
-    prompt += `\n\nIncorporate the following nail art techniques: ${artStylePrompt}.`;
+    prompt += `\n\nAdvanced techniques: ${artStylePrompt}.`;
   }
 
   /* Final Quality Guard & Safety */
+  if (isPro) {
+    prompt += `\n\nFinal verification: Ensure the design captures complex artistic techniques, realistic textures like 3D gel and chrome, and high-fashion aesthetics.`;
+  }
+
   prompt += `
 Ensure the final result looks cohesive, aesthetically balanced, and suitable for the selected difficulty level.
 Avoid overloading the design; maintain harmony between colors, techniques, and overall mood.

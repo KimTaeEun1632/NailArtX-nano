@@ -198,6 +198,29 @@ const MyPage = () => {
           {t("mypage.title")}
         </h1>
 
+        {/* Profile Header */}
+        <div className="flex items-center gap-6 mb-12 p-6 bg-slate-50 dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800">
+          <div className="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center text-primary text-3xl font-black overflow-hidden border-4 border-white dark:border-slate-800 shadow-xl">
+            {user?.user_metadata?.avatar_url ? (
+              <img
+                src={user.user_metadata.avatar_url}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <span>{(user?.email?.[0] || "U").toUpperCase()}</span>
+            )}
+          </div>
+          <div>
+            <h2 className="text-xl font-bold dark:text-white mb-1">
+              {user?.user_metadata?.full_name || user?.email?.split("@")[0]}
+            </h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              {user?.email}
+            </p>
+          </div>
+        </div>
+
         {/* 내 정보 섹션 */}
         <section className="mb-12">
           <h2 className="text-xl font-bold mb-4 dark:text-slate-200">

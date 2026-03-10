@@ -10,6 +10,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 const Header = ({ dark, setDark }) => {
   const { lang, toggleLanguage, t } = useLanguage();
   const [session, setSession] = useState(null);
+  const [isPro, setIsPro] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [authInitialIsSignUp, setAuthInitialIsSignUp] = useState(false);
   const [returnUrl, setReturnUrl] = useState(null);
@@ -17,15 +18,35 @@ const Header = ({ dark, setDark }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const checkProStatus = async (userId) => {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_pro")
+      .eq("id", userId)
+      .single();
+    
+    if (profile) {
+      setIsPro(profile.is_pro);
+    }
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session?.user) {
+        checkProStatus(session.user.id);
+      }
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user) {
+        checkProStatus(session.user.id);
+      } else {
+        setIsPro(false);
+      }
 
       if (window.location.hash.includes("access_token")) {
         window.history.replaceState(
@@ -64,6 +85,11 @@ const Header = ({ dark, setDark }) => {
   const closeMenu = () => setIsMenuOpen(false);
 
   const handleCheckout = async () => {
+    if (isPro) {
+      alert(t("generate.alerts.alreadyPro"));
+      return;
+    }
+
     try {
       const response = await fetch("/api/checkout", {
         method: "POST",

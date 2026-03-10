@@ -188,6 +188,7 @@ export default function Generate() {
         artStyles,
         shape,
         length,
+        isPro,
       });
 
       const {
@@ -278,6 +279,7 @@ export default function Generate() {
           selectedTrendColors={selectedTrendColors}
           setSelectedTrendColors={setSelectedTrendColors}
           isSidebarOpen={isSidebarOpen}
+          isPro={isPro}
         />
       }
       main={
