@@ -97,25 +97,12 @@ export const onRequestPost = async (context) => {
       }),
     };
 
-    let response = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
-      apiOptions
-    );
-
-    // Pro 모델 실패 시 Flash 모델로 폴백
-    if ((!response || !response.ok) && isPro) {
-      console.warn("Gemini Pro failed, attempting Gemini Flash fallback...");
-      modelName = "gemini-2.5-flash-image";
-      response = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
-        apiOptions
-      );
-    }
+    // [테스트 모드] Gemini 엔진을 건너뛰고 무조건 Cloudflare AI를 사용합니다.
+    let response = { ok: false }; 
 
     // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI - SDXL)
-    // 구글 API가 완전히 응답하지 않거나 에러인 경우 실행
-    if (!response || !response.ok) {
-      console.error("All Gemini attempts failed. Activating Cloudflare Workers AI Fallback...");
+    if (true) {
+      console.log("TEST MODE: Forcing Cloudflare Workers AI...");
       
       if (env.AI) {
         try {
@@ -130,8 +117,8 @@ export const onRequestPost = async (context) => {
           // Cloudflare AI는 이미지를 Uint8Array 또는 Stream 형태로 반환합니다.
           const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
 
-          // 사용량 업데이트 (백업 생성도 횟수에 포함)
-          await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+          // [수정] 백업 엔진(Cloudflare AI) 사용 시에는 품질 차이를 고려하여 사용 횟수를 차감하지 않습니다.
+          // (사용자에게 미안함의 표시이자 서비스 장애 보상 차원)
 
           return new Response(imageBuffer, {
             headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI" },
