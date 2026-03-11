@@ -97,48 +97,43 @@ export const onRequestPost = async (context) => {
       }),
     };
 
-    // [테스트 모드] Gemini 엔진을 건너뛰고 무조건 Cloudflare AI를 사용합니다.
-    let response = { ok: false }; 
+    let response = await fetchWithRetry(
+      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
+      apiOptions
+    );
 
-    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI - Flux)
-    if (true) {
-      console.log("TEST MODE: Forcing Cloudflare Workers AI (Flux)...");
+    // Pro 모델 실패 시 Flash 모델로 폴백
+    if ((!response || !response.ok) && isPro) {
+      console.warn("Gemini Pro failed, attempting Gemini Flash fallback...");
+      modelName = "gemini-2.5-flash-image";
+      response = await fetchWithRetry(
+        `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
+        apiOptions
+      );
+    }
+
+    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI)
+    // 구글 API가 완전히 응답하지 않거나 에러인 경우 실행
+    if (!response || !response.ok) {
+      console.error("All Gemini attempts failed. Activating Cloudflare Workers AI Fallback...");
       
       if (env.AI) {
         try {
-          // Flux 모델 호출
-          const aiResponse = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
+          // 백업은 속도가 빠른 SDXL 모델을 사용합니다.
+          const aiResponse = await env.AI.run('@cf/stabilityai/stable-diffusion-xl-base-1.0', {
             prompt: `(hyper-realistic nail art:1.2), macro photography, 8k, ${finalPrompt}`,
-            num_steps: 4, 
+            num_steps: 25,
           });
 
-          let imageBuffer;
-          // Flux 모델은 종종 { image: "base64..." } 형태의 JSON을 반환합니다.
-          if (aiResponse.image && typeof aiResponse.image === 'string') {
-            const base64Data = aiResponse.image;
-            const binaryString = atob(base64Data);
-            imageBuffer = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-              imageBuffer[i] = binaryString.charCodeAt(i);
-            }
-          } else {
-            // 그 외의 경우 (Response 객체나 ArrayBuffer인 경우) 처리
-            imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
-          }
+          const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
 
+          // [보상 정책] 백업 엔진 사용 시에는 품질 차이를 고려하여 사용 횟수를 차감하지 않습니다.
           return new Response(imageBuffer, {
-            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI-Flux" },
+            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI" },
           });
         } catch (aiErr) {
-          console.error("Cloudflare AI Error:", aiErr);
-          // 에러 내용을 직접 확인하기 위해 상세 메시지 반환
-          return new Response(JSON.stringify({ 
-            error: "Cloudflare AI Engine Failed", 
-            detail: String(aiErr) 
-          }), { status: 500 });
+          console.error("Cloudflare AI Fallback also failed:", aiErr);
         }
-      } else {
-        return new Response(JSON.stringify({ error: "AI Binding (env.AI) not found in this environment." }), { status: 500 });
       }
     }
 
