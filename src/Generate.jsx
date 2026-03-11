@@ -79,7 +79,15 @@ export default function Generate() {
   const [artStyles, setArtStyles] = useState([]);
   const [selectedQuickStyles, setSelectedQuickStyles] = useState([]);
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
+  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-image");
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
+
+  // Pro 사용자라면 기본 모델을 Pro로 설정
+  useEffect(() => {
+    if (isPro) {
+      setSelectedModel("gemini-3-pro-image-preview");
+    }
+  }, [isPro]);
 
   const verifyPayment = useCallback(
     async (checkoutId) => {
@@ -196,7 +204,7 @@ export default function Generate() {
       } = await supabase.auth.getSession();
       const response = await axios.post(
         API_URL,
-        { prompt, level, isPro, usageCount },
+        { prompt, level, isPro, usageCount, model: selectedModel },
         {
           responseType: "arraybuffer",
           transformResponse: [],
@@ -205,6 +213,10 @@ export default function Generate() {
           },
         },
       );
+
+      // AI 엔진 정보 로그 출력 (X-Engine 헤더 확인)
+      const engine = response.headers["x-engine"];
+      console.log(`✅ [NailArtX] Generated with ${engine || "Gemini AI"}`);
 
       const blob = new Blob([response.data], {
         type: response.headers["content-type"] || "image/png",
@@ -288,6 +300,8 @@ export default function Generate() {
           loading={loading}
           keyword={keyword}
           setKeyword={setKeyword}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
           onGenerate={generate}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}

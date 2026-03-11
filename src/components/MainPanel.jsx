@@ -8,6 +8,8 @@ const MainPanel = ({
   loading,
   keyword,
   setKeyword,
+  selectedModel,
+  setSelectedModel,
   onGenerate,
   setIsSidebarOpen,
   isSidebarOpen,
@@ -16,29 +18,53 @@ const MainPanel = ({
 }) => {
   const { t } = useLanguage();
 
+  const models = [
+    { id: "gemini-2.5-flash-image", label: "Gemini 2.5 Flash", isProOnly: false },
+    { id: "gemini-3-pro-image-preview", label: "Gemini 3 Pro", isProOnly: true },
+  ];
+
   return (
     <section className="h-full flex flex-col gap-4 w-full">
-      {/* toggle button */}
+      {/* top bar */}
       <div className="flex items-center justify-between gap-2 shrink-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-surface-light-dark transition-all shadow-sm z-30"
           >
             <SideToggle className="w-7 h-7" />
           </button>
-          {!isSidebarOpen && (
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-tight">
-              {isSidebarOpen ? "" : "Menu"}
-            </span>
-          )}
+          
+          {/* Model Selector Tabs */}
+          <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
+            {models.map((m) => {
+              const isActive = selectedModel === m.id;
+              const isDisabled = m.isProOnly && !isPro;
+              
+              return (
+                <button
+                  key={m.id}
+                  disabled={isDisabled}
+                  onClick={() => setSelectedModel(m.id)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+                    isActive 
+                      ? "bg-white dark:bg-surface-dark shadow-sm text-primary" 
+                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                  } ${isDisabled ? "opacity-50 cursor-not-allowed grayscale" : ""}`}
+                >
+                  {m.isProOnly && "✨"} {m.label}
+                  {isDisabled && <span className="text-[9px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded ml-1">PRO</span>}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Pro Status & Refund */}
         {isPro && (
           <div className="flex items-center gap-3 bg-primary/5 px-4 py-2 rounded-xl border border-primary/20">
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
-              ✨ {t("generate.panel.proBadge")} Active
+              ✨ PRO ACTIVE
             </span>
             <button
               onClick={onRefund}

@@ -26,7 +26,7 @@ async function fetchWithRetry(url, options, maxRetries = 2) {
 export const onRequestPost = async (context) => {
   try {
     const { request, env } = context;
-    const { prompt } = await request.json();
+    const { prompt, model: requestedModel } = await request.json();
 
     // 1. Supabase 인증 확인
     const authHeader = request.headers.get("Authorization");
@@ -76,15 +76,23 @@ export const onRequestPost = async (context) => {
       return new Response(JSON.stringify({ error: "Prompt is required" }), { status: 400 });
     }
 
+    // 3. 모델 결정 및 검증
+    // Pro 모델 리스트
+    const proModels = ["gemini-3-pro-image-preview"];
+    let finalModel = requestedModel || (isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image");
+
+    // Pro가 아닌데 Pro 모델을 요청한 경우 강제로 Flash 모델로 변경 (보안)
+    if (!isPro && proModels.includes(finalModel)) {
+      finalModel = "gemini-2.5-flash-image";
+    }
+
     let finalPrompt = prompt;
     if (!isPro) {
       finalPrompt = `${prompt}. Important: Please include a small, elegant 'NailArtX' text watermark at the bottom right corner of the image.`;
     }
 
-    // 3. 메인 엔진 시도 (Gemini API)
+    // 4. 메인 엔진 시도 (Gemini API)
     const apiVersion = "v1beta";
-    let modelName = isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image";
-    
     const apiOptions = {
       method: "POST",
       headers: {
@@ -97,47 +105,12 @@ export const onRequestPost = async (context) => {
       }),
     };
 
-    let response = await fetchWithRetry(
-      `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
+    const response = await fetchWithRetry(
+      `https://generativelanguage.googleapis.com/${apiVersion}/models/${finalModel}:generateContent`,
       apiOptions
     );
 
-    // Pro 모델 실패 시 Flash 모델로 폴백
-    if ((!response || !response.ok) && isPro) {
-      console.warn("Gemini Pro failed, attempting Gemini Flash fallback...");
-      modelName = "gemini-2.5-flash-image";
-      response = await fetchWithRetry(
-        `https://generativelanguage.googleapis.com/${apiVersion}/models/${modelName}:generateContent`,
-        apiOptions
-      );
-    }
-
-    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI)
-    // 구글 API가 완전히 응답하지 않거나 에러인 경우 실행
-    if (!response || !response.ok) {
-      console.error("All Gemini attempts failed. Activating Cloudflare Workers AI Fallback...");
-      
-      if (env.AI) {
-        try {
-          // 백업은 속도가 빠른 SDXL 모델을 사용합니다.
-          const aiResponse = await env.AI.run('@cf/stabilityai/stable-diffusion-xl-base-1.0', {
-            prompt: `(hyper-realistic nail art:1.2), macro photography, 8k, ${finalPrompt}`,
-            num_steps: 25,
-          });
-
-          const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
-
-          // [보상 정책] 백업 엔진 사용 시에는 품질 차이를 고려하여 사용 횟수를 차감하지 않습니다.
-          return new Response(imageBuffer, {
-            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI" },
-          });
-        } catch (aiErr) {
-          console.error("Cloudflare AI Fallback also failed:", aiErr);
-        }
-      }
-    }
-
-    // Gemini 응답 처리 (성공한 경우)
+    // Gemini 응답 처리
     if (response && response.ok) {
       const data = await response.json();
       const parts = data?.candidates?.[0]?.content?.parts ?? [];
@@ -147,17 +120,21 @@ export const onRequestPost = async (context) => {
         const { data: base64, mimeType } = imagePart.inlineData;
         const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
+        // 사용량 업데이트
         await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
 
         return new Response(imageBuffer, {
-          headers: { "Content-Type": mimeType ?? "image/png", "X-Engine": "Gemini" },
+          headers: { 
+            "Content-Type": mimeType ?? "image/png", 
+            "X-Engine": `Gemini-${finalModel}` 
+          },
         });
       }
     }
 
     // 모든 시도가 실패한 경우
     return new Response(JSON.stringify({ 
-      error: "Service temporarily unavailable. Our AI engines are currently under heavy load. Please try again in a few minutes." 
+      error: "The AI engine is currently busy or the model is unavailable. Please try again in a few seconds." 
     }), { status: 503 });
 
   } catch (err) {
