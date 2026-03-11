@@ -9,25 +9,25 @@ const LEVEL_PROMPT_MAP = {
   beginner: `
 A realistic, high-resolution close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
 The design theme is: {{KEYWORD}}.
-Display the five nail tips arranged side by side on a clean, neutral background.
+The background is a clean, modern aesthetic (such as marble or soft beige) to highlight the artistry. Photorealistic, 8k quality, cinematic lighting.
+Display the five nail tips arranged side by side.
 Each nail features easy-to-recreate styles with minimal details, such as solid colors, basic glitter, simple lines, or soft gradients.
-Realistic photography style focused purely on the nail products.
 `,
 
   salon: `
 A high-quality, realistic close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
 The design theme is: {{KEYWORD}}.
-Display the five nail tips arranged side by side on a modern, minimal background.
+The background is a clean, modern aesthetic (such as marble or soft beige) to highlight the artistry. Photorealistic, 8k quality, cinematic lighting.
+Display the five nail tips arranged side by side.
 Each nail displays clean, trendy, and client-ready nail art using moderate techniques such as subtle chrome accents, glitter, ombre, or simple 3D elements.
-Studio lighting highlights neat finishes and glossy top coats on the tips.
 `,
 
   advanced: `
 A hyper-realistic, high-resolution close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
 The design theme is: {{KEYWORD}}.
-Display the five nail tips arranged side by side on a premium, clean background like marble or soft beige.
+The background is a clean, modern aesthetic (such as marble or soft beige) to highlight the artistry. Photorealistic, 8k quality, cinematic lighting.
+Display the five nail tips arranged side by side.
 Each nail showcases complex, detailed nail art using advanced techniques such as chrome powder, layered 3D gel, refined ombre effects, and artistic textures.
-Photorealistic 8k quality, focusing strictly on the intricate nail tips.
 `,
 };
 
