@@ -100,34 +100,33 @@ export const onRequestPost = async (context) => {
     // [테스트 모드] Gemini 엔진을 건너뛰고 무조건 Cloudflare AI를 사용합니다.
     let response = { ok: false }; 
 
-    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI - SDXL)
+    // 4. 최종 백업 엔진 시도 (Cloudflare Workers AI - Flux)
     if (true) {
-      console.log("TEST MODE: Forcing Cloudflare Workers AI...");
+      console.log("TEST MODE: Forcing Cloudflare Workers AI (Flux)...");
       
       if (env.AI) {
         try {
-          // SDXL 모델에 최적화된 프롬프트 튜닝 (네일아트 특화 키워드 추가)
-          const sdxlPrompt = `(hyper-realistic nail art:1.2), macro photography of a hand with decorated nails, 8k resolution, professional studio lighting, focus on nails, ${finalPrompt}`;
-          
-          const aiResponse = await env.AI.run('@cf/stabilityai/stable-diffusion-xl-base-1.0', {
-            prompt: sdxlPrompt,
-            num_steps: 25, // 퀄리티와 속도의 균형
+          // Flux 모델은 현재 가장 고퀄리티 이미지를 생성합니다.
+          const aiResponse = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
+            prompt: `(hyper-realistic nail art:1.2), macro photography, 8k, ${finalPrompt}`,
+            num_steps: 4, // flux-1-schnell은 적은 단계로도 고퀄리티 가능
           });
 
-          // Cloudflare AI는 이미지를 Uint8Array 또는 Stream 형태로 반환합니다.
           const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
 
-          // [수정] 백업 엔진(Cloudflare AI) 사용 시에는 품질 차이를 고려하여 사용 횟수를 차감하지 않습니다.
-          // (사용자에게 미안함의 표시이자 서비스 장애 보상 차원)
-
           return new Response(imageBuffer, {
-            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI" },
+            headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI-Flux" },
           });
         } catch (aiErr) {
-          console.error("Cloudflare AI Fallback also failed:", aiErr);
+          console.error("Cloudflare AI Error:", aiErr);
+          // 에러 내용을 직접 확인하기 위해 상세 메시지 반환
+          return new Response(JSON.stringify({ 
+            error: "Cloudflare AI Engine Failed", 
+            detail: String(aiErr) 
+          }), { status: 500 });
         }
       } else {
-        console.warn("Cloudflare AI binding not found. Skipping fallback.");
+        return new Response(JSON.stringify({ error: "AI Binding (env.AI) not found in this environment." }), { status: 500 });
       }
     }
 
