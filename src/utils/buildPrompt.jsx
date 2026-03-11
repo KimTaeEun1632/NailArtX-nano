@@ -7,32 +7,27 @@ Level Prompt Map (Base)
 ------------------------------ */
 const LEVEL_PROMPT_MAP = {
   beginner: `
-A realistic, high-resolution close-up macro shot of five artificial nails, suitable for beginner or self nail art.
-The nail designs are based on the theme: {{KEYWORD}}.
-The set may include repeated or similar designs across multiple nails, allowing simple pattern structures.
+A realistic, high-resolution close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
+The design theme is: {{KEYWORD}}.
+Display the five nail tips arranged side by side on a clean, neutral background.
 Each nail features easy-to-recreate styles with minimal details, such as solid colors, basic glitter, simple lines, or soft gradients.
-The lighting is natural and soft, clearly showing the nails without dramatic effects.
-The background is clean and neutral to keep the focus on practical, achievable nail art.
-Realistic photography style.
+Realistic photography style focused purely on the nail products.
 `,
 
   salon: `
-A high-quality, realistic close-up macro shot of five artificial nails designed for professional salon use.
-The nail art is inspired by the theme: {{KEYWORD}}.
-The set can include a mix of repeated and varied designs, forming natural salon-style patterns.
+A high-quality, realistic close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
+The design theme is: {{KEYWORD}}.
+Display the five nail tips arranged side by side on a modern, minimal background.
 Each nail displays clean, trendy, and client-ready nail art using moderate techniques such as subtle chrome accents, glitter, ombre, or simple 3D elements.
-Studio lighting highlights neat finishes and glossy top coats.
-The background is modern and minimal, suitable for a nail salon portfolio.
+Studio lighting highlights neat finishes and glossy top coats on the tips.
 `,
 
   advanced: `
-A hyper-realistic, high-resolution close-up macro shot of five artificial nails created by a professional nail artist.
-The designs are centered around the theme: {{KEYWORD}}.
-The nail set may include both repeated and varied designs, allowing artistic pattern compositions across the five nails.
-Each nail showcases complex, detailed, and fashionable nail art using advanced techniques such as chrome powder, layered 3D gel, refined ombre effects, and artistic textures.
-Studio-quality cinematic lighting emphasizes texture, depth, and glossy reflections.
-The background is a clean, modern aesthetic such as marble or soft beige.
-Photorealistic, 8k quality.
+A hyper-realistic, high-resolution close-up macro shot of five standalone artificial nail tips, isolated without any hands, fingers, or skin visible.
+The design theme is: {{KEYWORD}}.
+Display the five nail tips arranged side by side on a premium, clean background like marble or soft beige.
+Each nail showcases complex, detailed nail art using advanced techniques such as chrome powder, layered 3D gel, refined ombre effects, and artistic textures.
+Photorealistic 8k quality, focusing strictly on the intricate nail tips.
 `,
 };
 

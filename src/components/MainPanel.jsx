@@ -18,46 +18,22 @@ const MainPanel = ({
 }) => {
   const { t } = useLanguage();
 
-  const models = [
-    { id: "gemini-2.5-flash-image", label: "Gemini 2.5 Flash", isProOnly: false },
-    { id: "gemini-3-pro-image-preview", label: "Gemini 3 Pro", isProOnly: true },
-  ];
-
   return (
     <section className="h-full flex flex-col gap-4 w-full">
       {/* top bar */}
       <div className="flex items-center justify-between gap-2 shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-surface-light-dark transition-all shadow-sm z-30"
           >
             <SideToggle className="w-7 h-7" />
           </button>
-          
-          {/* Model Selector Tabs */}
-          <div className="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800">
-            {models.map((m) => {
-              const isActive = selectedModel === m.id;
-              const isDisabled = m.isProOnly && !isPro;
-              
-              return (
-                <button
-                  key={m.id}
-                  disabled={isDisabled}
-                  onClick={() => setSelectedModel(m.id)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
-                    isActive 
-                      ? "bg-white dark:bg-surface-dark shadow-sm text-primary" 
-                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                  } ${isDisabled ? "opacity-50 cursor-not-allowed grayscale" : ""}`}
-                >
-                  {m.isProOnly && "✨"} {m.label}
-                  {isDisabled && <span className="text-[9px] bg-slate-200 dark:bg-slate-800 px-1.5 py-0.5 rounded ml-1">PRO</span>}
-                </button>
-              );
-            })}
-          </div>
+          {!isSidebarOpen && (
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-tight">
+              {isSidebarOpen ? "" : "Menu"}
+            </span>
+          )}
         </div>
 
         {/* Pro Status & Refund */}
@@ -85,8 +61,11 @@ const MainPanel = ({
         <PromptBox
           keyword={keyword}
           setKeyword={setKeyword}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
           onGenerate={onGenerate}
           loading={loading}
+          isPro={isPro}
         />
       </div>
     </section>
