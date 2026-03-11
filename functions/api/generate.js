@@ -106,13 +106,25 @@ export const onRequestPost = async (context) => {
       
       if (env.AI) {
         try {
-          // Flux 모델은 현재 가장 고퀄리티 이미지를 생성합니다.
+          // Flux 모델 호출
           const aiResponse = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', {
             prompt: `(hyper-realistic nail art:1.2), macro photography, 8k, ${finalPrompt}`,
-            num_steps: 4, // flux-1-schnell은 적은 단계로도 고퀄리티 가능
+            num_steps: 4, 
           });
 
-          const imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
+          let imageBuffer;
+          // Flux 모델은 종종 { image: "base64..." } 형태의 JSON을 반환합니다.
+          if (aiResponse.image && typeof aiResponse.image === 'string') {
+            const base64Data = aiResponse.image;
+            const binaryString = atob(base64Data);
+            imageBuffer = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+              imageBuffer[i] = binaryString.charCodeAt(i);
+            }
+          } else {
+            // 그 외의 경우 (Response 객체나 ArrayBuffer인 경우) 처리
+            imageBuffer = aiResponse instanceof Response ? await aiResponse.arrayBuffer() : aiResponse;
+          }
 
           return new Response(imageBuffer, {
             headers: { "Content-Type": "image/png", "X-Engine": "Cloudflare-AI-Flux" },
