@@ -154,6 +154,26 @@ export const translations = {
           waterdrop: "Waterdrop / Dot",
           warning: "Selecting too many styles might make the design complex!",
         },
+        tooltips: {
+          proTip: "Pro Tip",
+          levelInfo: "This controls the complexity and technique level of the generated nail art.",
+          nailArch: "Nail Architecture",
+          shapeInfo: "Choose the architectural shape of your artificial nail tips.",
+          level: {
+            beginner: "Simple, clean designs easy to recreate at home.",
+            salon: "Trendy, professional salon-style art with neat finishes.",
+            advanced: "Complex, high-fashion artistic 3D designs and textures.",
+          },
+          shape: {
+            almond: "Elegant and natural, mimics the nut's shape.",
+            stiletto: "Bold and pointed, creates a long, sharp look.",
+            ballerina: "Narrow like a ballerina shoe, very trendy.",
+            coffin: "Square-tipped and tapered, professional aesthetic.",
+            square: "Classic straight edges, sturdy and timeless.",
+            oval: "Soft, rounded edges for a natural and feminine look.",
+            round: "Simple and durable, perfect for short nails.",
+          },
+        },
       },
       panel: {
         placeholder:
@@ -427,6 +447,26 @@ export const translations = {
           plaid_tweed: "플래드 / 트위드",
           waterdrop: "물방울 / 도트",
           warning: "너무 많은 스타일을 선택하면 디자인이 복잡해질 수 있어요!",
+        },
+        tooltips: {
+          proTip: "프로 팁",
+          levelInfo: "생성될 네일 아트의 복잡도와 기술 수준을 결정합니다.",
+          nailArch: "네일 아키텍처",
+          shapeInfo: "인조 네일 팁의 구조적 형태를 선택하세요.",
+          level: {
+            beginner: "집에서 따라하기 쉬운 심플하고 깔끔한 디자인.",
+            salon: "트렌디하고 전문적인 살롱 스타일의 아트.",
+            advanced: "복잡하고 예술적인 하이패션 3D 디자인과 질감.",
+          },
+          shape: {
+            almond: "우아하고 자연스러운 아몬드 모양.",
+            stiletto: "길고 날카로운 느낌을 주는 대담한 모양.",
+            ballerina: "발레리나 슈즈처럼 좁아지는 트렌디한 모양.",
+            coffin: "끝이 평평하고 좁아지는 전문적인 스타일.",
+            square: "클래식하고 튼튼한 직선형 모양.",
+            oval: "자연스럽고 여성스러운 부드러운 곡선 모양.",
+            round: "짧은 손톱에 어울리는 심플하고 내구성 있는 모양.",
+          },
         },
       },
       panel: {

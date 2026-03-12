@@ -13,13 +13,25 @@ const PromptBox = ({
   const isGenerateDisabled = !keyword.trim() || loading;
 
   const models = [
-    { id: "gemini-2.5-flash-image", label: "Gemini 2.5 Flash", shortLabel: "Flash", isProOnly: false, icon: "⚡" },
-    { id: "gemini-3-pro-image-preview", label: "Gemini 3 Pro", shortLabel: "Pro", isProOnly: true, icon: "✨" },
+    {
+      id: "gemini-2.5-flash-image",
+      label: "Gemini 2.5 Flash",
+      shortLabel: "Flash",
+      isProOnly: false,
+      icon: "⚡",
+    },
+    {
+      id: "gemini-3-pro-image-preview",
+      label: "Gemini 3 Pro",
+      shortLabel: "Pro",
+      isProOnly: true,
+      icon: "✨",
+    },
   ];
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
-      <div className="relative bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-[32px] p-4 shadow-sm hover:shadow-md transition-shadow">
+      <div className="relative bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-800 rounded-4xl p-4 shadow-sm hover:shadow-md transition-shadow">
         {/* Input Area */}
         <textarea
           className="w-full bg-transparent border-none focus:ring-0 text-lg px-4 pt-2 pb-14 resize-none min-h-[100px] outline-none text-slate-700 dark:text-slate-200"
@@ -28,7 +40,7 @@ const PromptBox = ({
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey && !isGenerateDisabled) {
+            if (e.key === "Enter" && !e.shiftKey && !isGenerateDisabled) {
               e.preventDefault();
               onGenerate();
             }
@@ -60,7 +72,11 @@ const PromptBox = ({
                         : "text-slate-400 hover:text-slate-600 dark:text-slate-500"
                     } ${isDisabled ? "opacity-25 cursor-not-allowed grayscale" : ""}`}
                   >
-                    <span className={isActive ? "text-white" : "text-slate-300"}>{m.icon}</span>
+                    <span
+                      className={isActive ? "text-white" : "text-slate-300"}
+                    >
+                      {m.icon}
+                    </span>
                     <span className="whitespace-nowrap">{m.shortLabel}</span>
                     {isDisabled && (
                       <span className="text-[7px] bg-slate-200 dark:bg-slate-800 px-1 rounded ml-0.5 text-slate-500">
@@ -85,7 +101,11 @@ const PromptBox = ({
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 -rotate-45 translate-x-0.5 -translate-y-0.5">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5 -rotate-45 translate-x-0.5 -translate-y-0.5"
+                >
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               )}
