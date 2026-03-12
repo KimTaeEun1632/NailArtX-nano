@@ -279,11 +279,11 @@ export const translations = {
           avatar: "MK",
         },
         {
-          name: "Elena Rodriguez",
-          role: "Nail Influencer",
+          name: "Moon Yeo-jin",
+          role: "Aspiring Nail Artist",
           content:
-            "The Pro model is insane! The level of detail in the 3D art generations is something I've never seen before in AI.",
-          avatar: "ER",
+            "I'm amazed by the 3D art's depth and texture details. As an aspiring artist, I use this tool to simulate and practice complex designs—it's truly the best guide for my growth.",
+          avatar: "YJ",
         },
       ],
     },
@@ -571,11 +571,11 @@ export const translations = {
           avatar: "YJ",
         },
         {
-          name: "이혜리",
-          role: "네일 인플루언서",
+          name: "문여진",
+          role: "네일 아티스트 지망생",
           content:
-            "프로 모델은 정말 놀라워요! 3D 아트 생성의 디테일은 지금까지 본 AI 중에서 단연 최고입니다.",
-          avatar: "HR",
+            "3D 아트의 입체감과 질감 표현이 너무 섬세해서 놀랐어요. 아티스트를 준비하며 어려운 디자인을 구상할 때마다 이 툴로 미리 연습해 보는데, 정말 최고의 가이드가 됩니다.",
+          avatar: "YJ",
         },
       ],
     },
