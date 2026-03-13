@@ -21,8 +21,8 @@ const ComparisonSection = () => {
           <div className="group flex flex-col gap-6 p-4 rounded-3xl bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 shadow-sm transition-all hover:shadow-md">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
               <img
-                src="/포차코무료.png"
-                alt="Standard AI Model result"
+                src="/pochacco-free.png"
+                alt="Pochacco themed nail art design - Standard AI Model result"
                 className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500"
               />
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-black/60 text-white text-xs font-bold backdrop-blur-md">
@@ -41,8 +41,8 @@ const ComparisonSection = () => {
           <div className="group flex flex-col gap-6 p-4 rounded-3xl bg-white dark:bg-white/5 border-2 border-primary/20 dark:border-primary/30 shadow-xl shadow-primary/5 transition-all hover:scale-[1.02]">
             <div className="relative aspect-square rounded-2xl overflow-hidden bg-gray-100">
               <img
-                src="/포차쿠유료.jpg"
-                alt="Premium AI Model result"
+                src="/pochacco-paid.jpg"
+                alt="Pochacco themed nail art design - Premium AI Model result"
                 className="w-full h-full object-cover"
               />
               <div className="absolute top-4 left-4 px-3 py-1 rounded-full bg-primary text-white text-xs font-bold shadow-lg">

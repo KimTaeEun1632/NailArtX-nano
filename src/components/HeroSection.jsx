@@ -57,8 +57,8 @@ const HeroSection = () => {
             <div className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
               <img 
                 className="w-full h-full object-cover" 
-                src="/그라34.jpeg" 
-                alt="Nail Art Design 1"
+                src="/gradient-34.jpeg" 
+                alt="Purple and pink gradient nail art design"
                 fetchPriority="high"
                 width="300"
                 height="400"
@@ -68,8 +68,8 @@ const HeroSection = () => {
             <div className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
               <img 
                 className="w-full h-full object-cover" 
-                src="/산타11.jpeg" 
-                alt="Santa Nail Art"
+                src="/santa-11.jpeg" 
+                alt="Christmas themed Santa Claus nail art"
                 width="300"
                 height="300"
                 decoding="async"
@@ -80,8 +80,8 @@ const HeroSection = () => {
             <div className="aspect-square rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
               <img
                 className="w-full h-full object-cover"
-                src="/대리석11.jpeg"
-                alt="Marble Nail Art"
+                src="/marble-11.jpeg"
+                alt="Elegant white and gray marble texture nail art"
                 width="300"
                 height="300"
                 decoding="async"
@@ -90,8 +90,8 @@ const HeroSection = () => {
             <div className="aspect-3/4 rounded-4xl overflow-hidden shadow-log transform transition hover:scale-[1.02]">
               <img
                 className="w-full h-full object-cover"
-                src="/벚꽃34.jpeg"
-                alt="Cherry Blossom Nail Art"
+                src="/cherry-blossom.jpeg"
+                alt="Pink cherry blossom floral nail art design"
                 width="300"
                 height="400"
                 decoding="async"

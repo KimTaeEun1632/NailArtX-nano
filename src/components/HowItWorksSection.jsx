@@ -1,5 +1,5 @@
 import test1 from "/step1.png";
-import step3 from "/겨울 하운트 체크 네일.jpg";
+import step3 from "/winter-houndstooth.jpg";
 import CheckIcon from "../assets/icons/check.svg?react";
 import { useLanguage } from "../contexts/LanguageContext";
 

@@ -59,11 +59,11 @@ const GALLERY = [
   },
   {
     title: "Winter houndstooth check",
-    src: "겨울 하운트 체크 네일.jpg",
+    src: "winter-houndstooth.jpg",
   },
   {
     title: "Frozen",
-    src: "겨울왕국.jpg",
+    src: "frozen-world.jpg",
   },
   {
     title: "Flower",
@@ -71,11 +71,11 @@ const GALLERY = [
   },
   {
     title: "Moana",
-    src: "모아나.jpg",
+    src: "moana-spirit.jpg",
   },
   {
     title: "Rudolph",
-    src: "루돌프.jpg",
+    src: "rudolph-classic.jpg",
   },
   {
     title: "Santa",
