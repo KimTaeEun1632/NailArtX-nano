@@ -571,11 +571,11 @@ export const translations = {
           avatar: "YJ",
         },
         {
-          name: "문여진",
+          name: "설여진",
           role: "네일 아티스트 지망생",
           content:
             "3D 아트의 입체감과 질감 표현이 너무 섬세해서 놀랐어요. 아티스트를 준비하며 어려운 디자인을 구상할 때마다 이 툴로 미리 연습해 보는데, 정말 최고의 가이드가 됩니다.",
-          avatar: "YJ",
+          avatar: "SY",
         },
       ],
     },
