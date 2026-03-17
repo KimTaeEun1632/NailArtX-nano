@@ -38,7 +38,7 @@ const MainPanel = ({
 
         {/* Gradient Overlay for Chat Readability */}
         {img && !loading && (
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
         )}
 
         {/* Chat Integration Overlay */}

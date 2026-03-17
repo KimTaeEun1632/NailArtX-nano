@@ -1,0 +1,465 @@
+<!doctype html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>NailArtX - AI Design Studio</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#8b5cf6", // Modern Purple
+              "background-light": "#fcfaff",
+              "background-dark": "#1a1625",
+            },
+            fontFamily: {
+              display: ["Public Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Public Sans", sans-serif;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display"
+  >
+    <div class="flex h-screen flex-col overflow-hidden">
+      <!-- Top Navigation -->
+      <header
+        class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 z-20"
+      >
+        <div class="flex items-center gap-3">
+          <div class="bg-primary p-1.5 rounded-lg text-white">
+            <span class="material-symbols-outlined block text-2xl"
+              >auto_fix_high</span
+            >
+          </div>
+          <h2
+            class="text-xl font-bold tracking-tight text-slate-900 dark:text-white"
+          >
+            NailArtX
+          </h2>
+          <span
+            class="ml-2 px-2 py-0.5 rounded text-[10px] font-bold bg-primary/10 text-primary uppercase"
+            >Pro v2.5</span
+          >
+        </div>
+        <nav class="hidden md:flex items-center gap-8">
+          <a
+            class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary"
+            href="#"
+            >Gallery</a
+          >
+          <a
+            class="text-sm font-medium text-slate-900 dark:text-white border-b-2 border-primary pb-1"
+            href="#"
+            >Studio</a
+          >
+          <a
+            class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary"
+            href="#"
+            >My Collections</a
+          >
+        </nav>
+        <div class="flex items-center gap-4">
+          <button
+            class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
+          >
+            <span class="material-symbols-outlined text-sm">bolt</span>
+            <span>Upgrade</span>
+          </button>
+          <div class="h-8 w-px bg-slate-200 dark:bg-slate-800 mx-2"></div>
+          <div class="size-10 rounded-full border-2 border-primary/20 p-0.5">
+            <img
+              class="w-full h-full rounded-full object-cover"
+              data-alt="User avatar portrait"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUiU2eUDuJ9UWt-L3gdFXjPczgFc3KPrCOYWb0b6vYWg34hljdHdxJUGpynvZ6EJRXOiUyeXNG_KuNXDXKMRhtGGMNSHK2XDBC2ndGVYNpsTBUazvA3_fcE22Yno32TNvHorQmzyzu7V4apbbaLsA6EX47jI3zkgJxYbrtDQBRoOepkkqLycHaI7GeIuDVn6Wh_qNinjAuSk-wQhGPm9kZv4Qu92xtbg1sX1RWO4hmh5dPoj_oKCg1vUqrFd2quU3otaKLC2NatjKs"
+            />
+          </div>
+        </div>
+      </header>
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar: Configuration -->
+        <aside
+          class="w-80 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark overflow-y-auto custom-scrollbar"
+        >
+          <div class="p-6 space-y-8">
+            <!-- Expert Prompt Section -->
+            <section>
+              <div class="flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-primary text-xl"
+                  >psychology</span
+                >
+                <h3
+                  class="font-bold text-sm uppercase tracking-wider text-slate-500"
+                >
+                  Expert Prompt
+                </h3>
+              </div>
+              <div class="relative group">
+                <textarea
+                  class="w-full h-32 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
+                  placeholder="Describe your dream design (e.g., iridescent pearls with soft lavender gradients)..."
+                ></textarea>
+                <div class="absolute bottom-3 right-3 flex gap-2">
+                  <button
+                    class="p-1.5 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-primary transition-colors shadow-sm"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >auto_awesome</span
+                    >
+                  </button>
+                </div>
+              </div>
+            </section>
+            <!-- Technical Specs -->
+            <section class="space-y-6">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-xl"
+                  >settings_input_component</span
+                >
+                <h3
+                  class="font-bold text-sm uppercase tracking-wider text-slate-500"
+                >
+                  Technical Specs
+                </h3>
+              </div>
+              <!-- Nail Shape -->
+              <div class="space-y-3">
+                <label class="text-xs font-semibold text-slate-400"
+                  >NAIL SHAPE</label
+                >
+                <div class="grid grid-cols-2 gap-2">
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg border-2 border-primary bg-primary/5 text-primary text-xs font-medium"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >square</span
+                    >
+                    Square
+                  </button>
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-primary/50 text-slate-600 dark:text-slate-300 text-xs font-medium"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >change_history</span
+                    >
+                    Almond
+                  </button>
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-primary/50 text-slate-600 dark:text-slate-300 text-xs font-medium"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >circle</span
+                    >
+                    Oval
+                  </button>
+                  <button
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-primary/50 text-slate-600 dark:text-slate-300 text-xs font-medium"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >pentagon</span
+                    >
+                    Coffin
+                  </button>
+                </div>
+              </div>
+              <!-- Length -->
+              <div class="space-y-3">
+                <label class="text-xs font-semibold text-slate-400"
+                  >LENGTH</label
+                >
+                <div class="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                  <button
+                    class="flex-1 py-1.5 text-xs font-medium rounded-lg text-slate-500"
+                  >
+                    Short
+                  </button>
+                  <button
+                    class="flex-1 py-1.5 text-xs font-medium rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm"
+                  >
+                    Medium
+                  </button>
+                  <button
+                    class="flex-1 py-1.5 text-xs font-medium rounded-lg text-slate-500"
+                  >
+                    Long
+                  </button>
+                </div>
+              </div>
+              <!-- Decorations -->
+              <div class="space-y-3">
+                <label class="text-xs font-semibold text-slate-400"
+                  >DECORATIONS</label
+                >
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-primary hover:text-white transition-colors"
+                    >Stones</span
+                  >
+                  <span
+                    class="px-3 py-1.5 rounded-full bg-primary text-white text-xs border border-primary cursor-pointer"
+                    >Glitter</span
+                  >
+                  <span
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-primary hover:text-white transition-colors"
+                    >Chrome</span
+                  >
+                  <span
+                    class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-900 text-xs text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-primary hover:text-white transition-colors"
+                    >Hand-painted</span
+                  >
+                </div>
+              </div>
+              <!-- Detail Intensity -->
+              <div class="space-y-3">
+                <label class="text-xs font-semibold text-slate-400"
+                  >DETAIL INTENSITY</label
+                >
+                <input
+                  class="w-full accent-primary h-1.5 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer"
+                  type="range"
+                />
+                <div
+                  class="flex justify-between text-[10px] font-bold text-slate-400 uppercase"
+                >
+                  <span>Simple</span>
+                  <span>Detailed</span>
+                  <span>Ultra</span>
+                </div>
+              </div>
+            </section>
+            <button
+              class="w-full py-4 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity mt-4"
+            >
+              <span class="material-symbols-outlined">refresh</span>
+              Generate Design
+            </button>
+          </div>
+        </aside>
+        <!-- Main Canvas Area -->
+        <main
+          class="flex-1 relative bg-slate-100 dark:bg-slate-950 p-6 flex flex-col gap-6"
+        >
+          <!-- Canvas Toolbar -->
+          <div class="flex justify-between items-center z-10">
+            <div
+              class="flex bg-white/80 dark:bg-slate-900/80 backdrop-blur rounded-xl p-1 shadow-sm border border-slate-200 dark:border-slate-800"
+            >
+              <button
+                class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined">zoom_in</span>
+              </button>
+              <button
+                class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined">zoom_out</span>
+              </button>
+              <div
+                class="w-px h-6 bg-slate-200 dark:bg-slate-800 mx-1 self-center"
+              ></div>
+              <button
+                class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined">undo</span>
+              </button>
+              <button
+                class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
+              >
+                <span class="material-symbols-outlined">redo</span>
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm font-semibold flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-base"
+                  >download</span
+                >
+                Save
+              </button>
+              <button
+                class="px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-sm font-semibold flex items-center gap-2"
+              >
+                <span class="material-symbols-outlined text-base">share</span>
+                Share
+              </button>
+            </div>
+          </div>
+          <!-- Main Generated Image Display -->
+          <div
+            class="flex-1 relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800 group"
+          >
+            <img
+              class="w-full h-full object-cover"
+              data-alt="Modern purple and chrome nail art design"
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCa6whwn6ceLkob0-W8p1-SVYVVApuM-ae63b2jLXMncqpDNGO1U9iMWEDXQCA-buL5HtBPY0TX3tRZfrWsFFZeQwSJz4s8X3IBU94C4tJ9vSbrp4sRT5-Z2R8C3NR3qSonXx9Jhs2C-tT3dwQtGD6zz4WE6jHYrLyuZ_urnwjZ6BvOfYxTl5cHhhYHRl3YknNDmMvUoimyJbDxd29roH-e62QAUMF38IhCTsXFTdv1OW10TyvcywUJruwS2Y9-wYpRlVOgnMWlmjD8"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"
+            ></div>
+            <!-- Chat Integration Overlay -->
+            <div class="absolute inset-x-0 bottom-0 p-6 flex flex-col gap-4">
+              <!-- Message Thread (Translucent) -->
+              <div class="max-w-2xl mx-auto w-full space-y-3">
+                <div class="flex justify-end">
+                  <div
+                    class="bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl rounded-tr-none px-4 py-2.5 text-sm max-w-sm shadow-xl"
+                  >
+                    Can you make the color more pastel and add small pearls?
+                  </div>
+                </div>
+                <div class="flex justify-start gap-3">
+                  <div
+                    class="size-8 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-lg"
+                  >
+                    <span class="material-symbols-outlined text-lg"
+                      >auto_fix_high</span
+                    >
+                  </div>
+                  <div
+                    class="bg-primary/20 backdrop-blur-md border border-primary/30 text-white rounded-2xl rounded-tl-none px-4 py-2.5 text-sm max-w-sm shadow-xl"
+                  >
+                    Certainly! I've updated the palette to a soft lavender and
+                    added micro-pearl accents near the cuticles. Generating new
+                    preview...
+                  </div>
+                </div>
+              </div>
+              <!-- Chat Input Prominent -->
+              <div class="max-w-3xl mx-auto w-full relative">
+                <div
+                  class="flex items-center gap-2 p-2 bg-white/90 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20"
+                >
+                  <button
+                    class="p-2 text-slate-400 hover:text-primary transition-colors"
+                  >
+                    <span class="material-symbols-outlined">image</span>
+                  </button>
+                  <input
+                    class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 px-1 dark:text-white"
+                    placeholder="Ask your Design Assistant to refine this..."
+                    type="text"
+                  />
+                  <button
+                    class="bg-primary text-white size-10 rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform"
+                  >
+                    <span class="material-symbols-outlined">send</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Quick Variation Strip -->
+          <div class="h-24 flex gap-4 overflow-x-auto custom-scrollbar pb-2">
+            <div
+              class="h-full aspect-square rounded-xl overflow-hidden border-2 border-primary ring-2 ring-primary/20 shrink-0 cursor-pointer"
+            >
+              <img
+                class="w-full h-full object-cover"
+                data-alt="Nail variation 1"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4oJRvSzIPcSukwcLPQoAfHd1UT0ptRZWH-BYdAemBG6pcrvaJu_RDnEsM7lwmndbsJBrkxaLrszthrG7DAJRqdr7Rg38QfyKrhkU2uqTTMzqsKqIPAuZsCf2oc7szsxMc-oO6KMvR7Agu6gyZJZ3B7gISmAuDCkCoa-11xpJxJLKfD2WYONvTdNDq67-faFwKi6p8DRUMipCSTHZMF36DDeEUrPbJDltS7xwu9SJhLMnTrYmaBsJUQQyFl9f55s1OQzKvZ2Bd8eKb"
+              />
+            </div>
+            <div
+              class="h-full aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <img
+                class="w-full h-full object-cover"
+                data-alt="Nail variation 2"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2b7ZNScParX6eXLtg-6Stmm99JDPkOBiA8KXyfvn8AKzBJfVXL5fYHH-fwYIeN4fOkcw3HAaD9CdvPMmIYoDT2PBy3ZGRLn8fvvwx4t3R2cuqlBYPPqA6hwC-BsS5XyTYZVYca2PEOOmmxfJ7dnYZBhfCDZoZw5xhVuzUKXGpiWKWuvK1x4TRGc4DOJKgW8I0EjelN25rYWH1wgvJeI_x6cDmTWyYmFgjdDgYI505Y8Gglvt1wLM6-XrfQNtCs_ZJ2JKatAFfxf_m"
+              />
+            </div>
+            <div
+              class="h-full aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <img
+                class="w-full h-full object-cover"
+                data-alt="Nail variation 3"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCdv1YSa6PA14To5yJUPuGUz_pcGO_4fBcHyy4-UAKcz1MuDQgBtzGYqFEIIKa3szf5Xtnr48dRMkUw0AH-d7mzM_3iB6y9b5u79Cmdm_ChyuXeitt64rwlKVDTtp8MtGknLocHuSKM_0Dsx7Kyq6N7XVCcs0-M425z9uVNsKLlFlkbWm4OtYa267XOz6BrQMmwvvBbyCYTXEGH6U_lhSIj8sjAoeXg6tIfzIPjRNn05NJPrN4LTdpGcKOiqk4V_DZ7EeUh4L8sjYi"
+              />
+            </div>
+            <div
+              class="h-full aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800 shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
+            >
+              <img
+                class="w-full h-full object-cover"
+                data-alt="Nail variation 4"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDE7dTJ8PADH_9kScmQiqbGBIkS_MIjjyXFicjugr3pF4uPRRY_i31d-ml9RxxrUKUuO-mKX4FpMUPXrEXbBkBI-akG0QIHR8WFsWHoCEBVh5vprJbMaMAVraGpkKNbcw_zFKjSZBcmwbI0Nks1_vJZgfc8AYiVTjSFD2AWYsdRJNKfpNFqgHIJcdMncEyQXUvthR5VoD9UCO7fe9igkcaCAL0XDbSljT1Okfqd0jtWawsIhfTPPdk09y_k0m4US1mOiPFw7IoB41Wl"
+              />
+            </div>
+            <div
+              class="h-full aspect-square rounded-xl bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0 cursor-pointer border border-dashed border-slate-400"
+            >
+              <span class="material-symbols-outlined text-slate-400">add</span>
+            </div>
+          </div>
+        </main>
+        <!-- Mini History / Preset Panel (Optional Right) -->
+        <aside
+          class="w-16 flex-shrink-0 border-l border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col items-center py-6 gap-6 z-10"
+        >
+          <button
+            class="size-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-primary transition-colors flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined">history</span>
+          </button>
+          <button
+            class="size-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-primary transition-colors flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined">layers</span>
+          </button>
+          <button
+            class="size-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-primary transition-colors flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined">palette</span>
+          </button>
+          <div class="flex-1"></div>
+          <button
+            class="size-10 rounded-xl bg-slate-50 dark:bg-slate-900 text-slate-400 hover:text-primary transition-colors flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined">settings</span>
+          </button>
+        </aside>
+      </div>
+    </div>
+  </body>
+</html>
