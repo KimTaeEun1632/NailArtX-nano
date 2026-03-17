@@ -1,12 +1,27 @@
+import { useCallback } from "react";
+
 const ImageCanvas = ({ img, loading }) => {
+  // 다운로드 기능 (가장 확실한 저장 방식)
+  const handleDownload = useCallback(() => {
+    if (!img) return;
+    const timestamp = Date.now();
+    const link = document.createElement('a');
+    link.href = img;
+    link.download = `nail-art-design-${timestamp}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }, [img]);
+
   // 공유 기능 (모바일/지원 브라우저)
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     if (!img || !navigator.share) return;
     try {
       const response = await fetch(img).catch(() => null);
       if (response) {
         const blob = await response.blob();
-        const file = new File([blob], `nail-art-${Date.now()}.png`, { type: 'image/png' });
+        const timestamp = Date.now();
+        const file = new File([blob], `nail-art-${timestamp}.png`, { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
@@ -19,18 +34,7 @@ const ImageCanvas = ({ img, loading }) => {
       console.error('Share failed:', err);
       handleDownload(); // 공유 실패 시 다운로드로 대체
     }
-  };
-
-  // 다운로드 기능 (가장 확실한 저장 방식)
-  const handleDownload = () => {
-    if (!img) return;
-    const link = document.createElement('a');
-    link.href = img;
-    link.download = `nail-art-design-${Date.now()}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  }, [img, handleDownload]);
 
   return (
     <div className="w-full h-full relative group/canvas">
@@ -42,7 +46,7 @@ const ImageCanvas = ({ img, loading }) => {
           className="flex items-center justify-center h-full
           bg-slate-50/50 dark:bg-slate-950/80 relative overflow-hidden"
         >
-          {/* 배경 글로우 효과 */}
+          {/* 배경 글로우 효과 (오리지널 수치로 복구) */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] bg-primary/20 dark:bg-primary/40 rounded-full blur-[100px] opacity-0 group-hover/canvas:opacity-100 transition-opacity duration-1000" />
           </div>
@@ -102,15 +106,7 @@ const ImageCanvas = ({ img, loading }) => {
             </div>
           )}
 
-          {!loading && !img && (
-            <div className="relative z-10 text-center space-y-4 max-w-xs px-6">
-              <div className="w-16 h-16 bg-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-6">
-                <span className="text-3xl">🎨</span>
-              </div>
-              <h2 className="text-xl font-black text-slate-800 dark:text-slate-100">Ready to Design?</h2>
-              <p className="text-sm text-slate-500 font-medium">스타일을 선택하고 생성 버튼을 눌러보세요.</p>
-            </div>
-          )}
+          {!loading && !img && null}
         </div>
       </div>
     </div>
