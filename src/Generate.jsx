@@ -72,7 +72,8 @@ export default function Generate() {
 
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [img, setImg] = useState(null);
+  const [history, setHistory] = useState([]); // 이미지 히스토리 배열
+  const [currentIndex, setCurrentIndex] = useState(-1); // 현재 선택된 이미지 인덱스
   const [level, setLevel] = useState(null);
   const [shape, setShape] = useState(null);
   const [length, setLength] = useState(null);
@@ -81,6 +82,11 @@ export default function Generate() {
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
   const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-image");
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
+
+  // 현재 표시할 이미지 선택
+  const currentImg = currentIndex >= 0 ? history[currentIndex] : null;
+
+  console.log("Generate state:", { isSidebarOpen, setIsSidebarOpenType: typeof setIsSidebarOpen });
 
   // Pro 사용자라면 기본 모델을 Pro로 설정
   useEffect(() => {
@@ -186,7 +192,6 @@ export default function Generate() {
 
     try {
       setLoading(true);
-      setImg(null);
 
       const prompt = buildPrompt({
         keyword,
@@ -214,10 +219,6 @@ export default function Generate() {
         },
       );
 
-      // AI 엔진 정보 로그 출력 (X-Engine 헤더 확인)
-      const engine = response.headers["x-engine"];
-      console.log(`✅ [NailArtX] Generated with ${engine || "Gemini AI"}`);
-
       const blob = new Blob([response.data], {
         type: response.headers["content-type"] || "image/png",
       });
@@ -229,7 +230,10 @@ export default function Generate() {
         reader.readAsDataURL(blob);
       });
 
-      setImg(dataUrl);
+      // 히스토리에 추가
+      const newHistory = [...history, dataUrl];
+      setHistory(newHistory);
+      setCurrentIndex(newHistory.length - 1);
 
       // GA4 Generate Success Event
       if (window.gtag) {
@@ -253,24 +257,61 @@ export default function Generate() {
         setUsageCount(newCount);
       }
     } catch (err) {
-      if (err.response?.data instanceof ArrayBuffer) {
-        const text = new TextDecoder().decode(err.response.data);
-        console.error("Error content:", text);
-        try {
-          const errorJson = JSON.parse(text);
-          alert(errorJson.error || t("generate.alerts.error"));
-        } catch (e) {
-          console.error(e);
-          alert(t("generate.alerts.error"));
-        }
-      } else {
-        console.error(err);
-        alert(t("generate.alerts.error"));
-      }
+      console.error(err);
+      alert(t("generate.alerts.error"));
     } finally {
       setLoading(false);
     }
   }
+
+  async function handleEdit(userMessage) {
+    if (!currentImg) return;
+    try {
+      setLoading(true);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      
+      const response = await axios.post(
+        "/api/edit",
+        { userMessage, baseImage: currentImg },
+        {
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"] || "image/png",
+      });
+
+      const dataUrl = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      // 수정된 이미지도 히스토리에 추가 (베리에이션)
+      const newHistory = [...history, dataUrl];
+      setHistory(newHistory);
+      setCurrentIndex(newHistory.length - 1);
+      
+    } catch (err) {
+      console.error("Edit failed", err);
+      alert(t("generate.alerts.error"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleNew = () => {
+    setCurrentIndex(-1);
+    setKeyword("");
+    // 필요하다면 스타일들도 초기화할 수 있지만, 여기서는 프롬프트와 선택만 초기화합니다.
+  };
 
   return (
     <GeneratorLayout
@@ -291,18 +332,24 @@ export default function Generate() {
           selectedTrendColors={selectedTrendColors}
           setSelectedTrendColors={setSelectedTrendColors}
           isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
           isPro={isPro}
         />
       }
       main={
         <MainPanel
-          img={img}
+          img={currentImg}
+          history={history}
+          currentIndex={currentIndex}
+          onSelectHistory={setCurrentIndex}
           loading={loading}
           keyword={keyword}
           setKeyword={setKeyword}
           selectedModel={selectedModel}
           setSelectedModel={setSelectedModel}
           onGenerate={generate}
+          onEdit={handleEdit}
+          onNew={handleNew}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
           isPro={isPro}

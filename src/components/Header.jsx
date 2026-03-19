@@ -123,7 +123,7 @@ const Header = ({ dark, setDark }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-100 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] dark:text-white bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 transition-colors">
+      <header className="fixed top-0 left-0 right-0 z-100 flex items-center justify-between border-b border-[#f3f0f4] dark:border-[#3a2a40] dark:text-white bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-3 lg:px-20 pt-[env(safe-area-inset-top,12px)] lg:pt-3 transition-colors">
         <div className="flex items-center gap-4">
           <div className="size-9 flex items-center justify-center bg-primary/10 rounded-2xl text-primary">
             <BrushIcon />
@@ -194,12 +194,18 @@ const Header = ({ dark, setDark }) => {
           <div className="flex items-center gap-2">
             {session ? (
               <div className="flex items-center gap-4">
-                <button
-                  onClick={handleCheckout}
-                  className="flex items-center justify-center h-10 px-6 rounded-xl border border-primary text-primary font-bold hover:bg-primary/5 transition-colors"
-                >
-                  {t("header.goPro")}
-                </button>
+                {isPro ? (
+                  <div className="flex items-center justify-center h-10 px-6 rounded-xl bg-primary/10 text-primary font-black text-sm tracking-tight border border-primary/20">
+                    ✨ PRO ACTIVE
+                  </div>
+                ) : (
+                  <button
+                    onClick={handleCheckout}
+                    className="flex items-center justify-center h-10 px-6 rounded-xl border border-primary text-primary font-bold hover:bg-primary/5 transition-colors"
+                  >
+                    {t("header.goPro")}
+                  </button>
+                )}
                 <div className="relative group">
                   <button className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10 text-primary font-bold overflow-hidden border-2 border-transparent hover:border-primary transition-all">
                     {session.user.user_metadata?.avatar_url ? (
@@ -222,12 +228,14 @@ const Header = ({ dark, setDark }) => {
                         {session.user.email}
                       </p>
                     </div>
-                    <button
-                      onClick={handleCheckout}
-                      className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
-                    >
-                      {t("header.goPro")}
-                    </button>
+                    {!isPro && (
+                      <button
+                        onClick={handleCheckout}
+                        className="w-full text-left px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        {t("header.goPro")}
+                      </button>
+                    )}
                     <Link
                       to="/mypage"
                       className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
@@ -316,7 +324,7 @@ const Header = ({ dark, setDark }) => {
 
       {/* Mobile Menu Content */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-white dark:bg-background-dark md:hidden pt-20 px-6 flex flex-col gap-6 transition-all duration-300">
+        <div className="fixed inset-0 z-40 bg-white dark:bg-background-dark md:hidden pt-[calc(env(safe-area-inset-top,0px)+80px)] px-6 flex flex-col gap-6 transition-all duration-300">
           <nav className="flex flex-col gap-6">
             <a
               href="#how-it-works"
@@ -346,15 +354,21 @@ const Header = ({ dark, setDark }) => {
           <div className="flex flex-col gap-4">
             {session ? (
               <>
-                <button
-                  onClick={async () => {
-                    closeMenu();
-                    handleCheckout();
-                  }}
-                  className="flex items-center justify-center h-12 rounded-xl border border-primary text-primary font-bold"
-                >
-                  {t("header.goPro")}
-                </button>
+                {isPro ? (
+                  <div className="flex items-center justify-center h-12 rounded-xl bg-primary/10 text-primary font-black">
+                    ✨ PRO ACTIVE
+                  </div>
+                ) : (
+                  <button
+                    onClick={async () => {
+                      closeMenu();
+                      handleCheckout();
+                    }}
+                    className="flex items-center justify-center h-12 rounded-xl border border-primary text-primary font-bold"
+                  >
+                    {t("header.goPro")}
+                  </button>
+                )}
                 <Link
                   to="/mypage"
                   onClick={closeMenu}

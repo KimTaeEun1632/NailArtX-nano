@@ -5,43 +5,34 @@ const GeneratorLayout = ({
   setIsSidebarOpen,
 }) => {
   return (
-    <main className="relative max-w-[1800px] mx-auto px-4 lg:px-6 py-6 h-[calc(100vh-64px)] overflow-hidden bg-white dark:bg-background-dark text-[#151118] dark:text-white transition-colors duration-300">
-      <div className="flex gap-0 lg:gap-6 h-full w-full">
+    <div className="flex h-[calc(100dvh-60px)] lg:h-[calc(100dvh-64px)] flex-col overflow-hidden bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased font-display">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Left Sidebar: Configuration */}
+        <aside
+          className={`
+            fixed lg:relative top-[52px] lg:top-0 left-0 h-[calc(100dvh-52px)] lg:h-full bg-white dark:bg-background-dark border-slate-200 dark:border-slate-800 transition-all duration-300 z-30 overflow-hidden shrink-0
+            ${isSidebarOpen ? "w-80 border-r translate-x-0" : "w-0 border-none -translate-x-full lg:translate-x-0"}
+          `}
+        >
+          <div className="w-80 h-full overflow-y-auto custom-scrollbar">
+            {sidebar}
+          </div>
+        </aside>
+
+        {/* Overlay for mobile sidebar */}
         {isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300"
+          <div 
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-20 lg:hidden"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
-        <div
-          className={`
-            /* 공통 */
-            h-full transition-all duration-300 ease-in-out z-50
-            
-            /* 모바일/태블릿: 오버레이 방식 */
-            fixed inset-y-0 left-0 bg-white dark:bg-surface-dark shadow-2xl p-6
-            lg:relative lg:bg-transparent lg:shadow-none lg:p-0
-            
-            /* 열림/닫힘 상태 제어 */
-            ${
-              isSidebarOpen
-                ? "translate-x-0 w-[300px] opacity-100"
-                : "-translate-x-full lg:translate-x-0 lg:w-0 lg:opacity-0 lg:overflow-hidden"
-            }
-            
-            /* 데스크탑에서만 마진 적용 */
-            ${isSidebarOpen ? "xl:mr-15" : "lg:mr-0"}
-          `}
-        >
-          <div className="w-[260px] lg:w-[320px] xl:w-[380px] h-full">
-            {sidebar}
-          </div>
-        </div>
-        <div className="flex-1 h-full min-w-0 transition-all duration-300">
+
+        {/* Main Canvas Area */}
+        <main className="flex-1 relative bg-slate-100 dark:bg-slate-950 flex flex-col min-w-0 overflow-hidden">
           {main}
-        </div>
+        </main>
       </div>
-    </main>
+    </div>
   );
 };
 

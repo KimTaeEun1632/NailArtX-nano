@@ -241,9 +241,9 @@ export const translations = {
         features: [
           "80 designs per month",
           "Premium AI model",
+          "Interactive AI Design Editing",
           "High-resolution downloads",
           "Commercial usage rights",
-          "Priority generation speed",
           "Exclusive styles & colors",
         ],
         cta: "Upgrade to Pro",
@@ -536,9 +536,9 @@ export const translations = {
         features: [
           "월 80회 디자인 생성",
           "프리미엄 AI 모델",
+          "대화형 디자인 수정 (AI 채팅)",
           "고해상도 다운로드",
           "상업적 이용 권한",
-          "우선 생성 속도",
           "독점 스타일 및 컬러",
         ],
         cta: "프로로 업그레이드",
