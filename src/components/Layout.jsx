@@ -20,11 +20,13 @@ const Layout = () => {
   }, [dark]);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header dark={dark} setDark={setDark} />
-      <Outlet context={{ dark, setDark }} />
+      <main className="flex-1 pt-[60px] lg:pt-[64px]">
+        <Outlet context={{ dark, setDark }} />
+      </main>
       <Footer />
-    </>
+    </div>
   );
 };
 

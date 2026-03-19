@@ -17,20 +17,34 @@ const ImageCanvas = ({ img, loading }) => {
   const handleShare = useCallback(async () => {
     if (!img || !navigator.share) return;
     try {
-      const response = await fetch(img).catch(() => null);
-      if (response) {
-        const blob = await response.blob();
-        const timestamp = Date.now();
-        const file = new File([blob], `nail-art-${timestamp}.png`, {
-          type: "image/png",
+      let blob;
+      if (img.startsWith("data:")) {
+        const response = await fetch(img);
+        blob = await response.blob();
+      } else {
+        const response = await fetch(img).catch(() => null);
+        if (!response) throw new Error("Fetch failed");
+        blob = await response.blob();
+      }
+
+      const timestamp = Date.now();
+      const file = new File([blob], `nail-art-${timestamp}.png`, {
+        type: "image/png",
+      });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: "NailArtX Design",
+          text: "내가 디자인한 네일 아트야! 어때?",
         });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: "NailArtX Design",
-            text: "내가 디자인한 네일 아트야! 어때?",
-          });
-        }
+      } else {
+        // 파일 공유가 지원되지 않으면 텍스트 공유라도 시도
+        await navigator.share({
+          title: "NailArtX Design",
+          text: "내가 디자인한 네일 아트야! 어때?",
+          url: window.location.href,
+        });
       }
     } catch (err) {
       console.error("Share failed:", err);
@@ -71,7 +85,7 @@ const ImageCanvas = ({ img, loading }) => {
               />
 
               {/* 오른쪽 하단 버튼 그룹 - 아이콘 전용 정사각형 디자인 */}
-              <div className="absolute bottom-6 right-6 z-30 flex gap-3 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+              <div className="absolute bottom-6 right-6 z-30 flex gap-3 opacity-100 sm:opacity-0 translate-y-0 sm:translate-y-4 sm:group-hover:opacity-100 sm:group-hover:translate-y-0 transition-all duration-300">
                 {/* 공유 버튼 (지원 기기에서만 표시) */}
                 {navigator.share && (
                   <button
@@ -116,7 +130,7 @@ const ImageCanvas = ({ img, loading }) => {
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 12.75l-6-6M12 12.75l6-6M12 12.75V3"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 3v9.75m0 0l-3.75-3.75M12 12.75l3.75-3.75"
                     />
                   </svg>
                   {/* 다운로드 아이콘 SVG 교체 (화살표가 아래로 향하는 심플한 라인) */}
@@ -132,7 +146,7 @@ const ImageCanvas = ({ img, loading }) => {
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 12.75l-6-6M12 12.75l6-6M12 12.75V3"
+                        d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M12 3v9.75m0 0l-3.75-3.75M12 12.75l3.75-3.75"
                       />
                     </svg>
                   </div>

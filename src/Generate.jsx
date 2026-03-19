@@ -86,6 +86,8 @@ export default function Generate() {
   // 현재 표시할 이미지 선택
   const currentImg = currentIndex >= 0 ? history[currentIndex] : null;
 
+  console.log("Generate state:", { isSidebarOpen, setIsSidebarOpenType: typeof setIsSidebarOpen });
+
   // Pro 사용자라면 기본 모델을 Pro로 설정
   useEffect(() => {
     if (isPro) {
@@ -305,6 +307,12 @@ export default function Generate() {
     }
   }
 
+  const handleNew = () => {
+    setCurrentIndex(-1);
+    setKeyword("");
+    // 필요하다면 스타일들도 초기화할 수 있지만, 여기서는 프롬프트와 선택만 초기화합니다.
+  };
+
   return (
     <GeneratorLayout
       isSidebarOpen={isSidebarOpen}
@@ -324,6 +332,7 @@ export default function Generate() {
           selectedTrendColors={selectedTrendColors}
           setSelectedTrendColors={setSelectedTrendColors}
           isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
           isPro={isPro}
         />
       }
@@ -340,6 +349,7 @@ export default function Generate() {
           setSelectedModel={setSelectedModel}
           onGenerate={generate}
           onEdit={handleEdit}
+          onNew={handleNew}
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
           isPro={isPro}
