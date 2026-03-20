@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabase";
 import { useLanguage } from "../contexts/LanguageContext";
+import Turnstile from "react-turnstile";
 
 export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const { t } = useLanguage();
@@ -12,6 +13,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const validatePassword = (pw) => {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
@@ -21,6 +23,11 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const handleAuth = async (e) => {
     e.preventDefault();
     
+    if (!isForgotPassword && !captchaToken) {
+      alert("Please complete the CAPTCHA.");
+      return;
+    }
+
     if ((isSignUp || isForgotPassword) && !validatePassword(password)) {
       alert(t("auth.passwordHint"));
       return;
@@ -37,18 +44,24 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
       if (isForgotPassword) {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
+          captchaToken,
         });
         if (error) throw error;
         alert("Password reset email sent! Check your inbox.");
         setIsForgotPassword(false);
       } else if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: { captchaToken }
+        });
         if (error) throw error;
         alert(t("auth.checkEmail"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
+          options: { captchaToken }
         });
         if (error) throw error;
         
@@ -203,8 +216,16 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
             </>
           )}
 
+          <div className="flex justify-center py-2">
+            <Turnstile
+              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+              onVerify={(token) => setCaptchaToken(token)}
+              theme="light"
+            />
+          </div>
+
           <button
-            disabled={loading}
+            disabled={loading || (!isForgotPassword && !captchaToken)}
             className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50"
           >
             {loading
