@@ -38,11 +38,11 @@ export async function onRequest(context) {
     // 4. Content Security Policy (프로젝트 리소스에 맞춰 확장)
     const csp = [
       "default-src 'self';",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.clarity.ms https://*.google-analytics.com https://*.google.com https://*.gstatic.com https://*.adtrafficquality.google;",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://static.cloudflareinsights.com https://www.googletagmanager.com https://pagead2.googlesyndication.com https://*.clarity.ms https://*.google-analytics.com https://*.google.com https://*.gstatic.com https://*.adtrafficquality.google;",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.clarity.ms;",
       "font-src 'self' data: https://fonts.gstatic.com;",
       "img-src 'self' data: blob: https: https://www.googletagmanager.com https://*.google-analytics.com https://*.clarity.ms https://*.doubleclick.net;",
-      "connect-src 'self' https://api.polar.sh https://*.supabase.co https://generativelanguage.googleapis.com https://*.google-analytics.com https://stats.g.doubleclick.net https://*.clarity.ms https://*.adtrafficquality.google ws://localhost:* wss://localhost:* ws://127.0.0.1:* wss://127.0.0.1:*;",
+      "connect-src 'self' https://api.polar.sh https://*.supabase.co https://generativelanguage.googleapis.com https://static.cloudflareinsights.com https://*.google-analytics.com https://stats.g.doubleclick.net https://*.clarity.ms https://*.adtrafficquality.google ws://localhost:* wss://localhost:* ws://127.0.0.1:* wss://127.0.0.1:*;",
       "frame-src 'self' https://challenges.cloudflare.com https://googleads.g.doubleclick.net https://*.google.com https://*.adtrafficquality.google;",
     ].join(" ");
 
