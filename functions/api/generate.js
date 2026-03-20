@@ -132,13 +132,20 @@ export const onRequestPost = async (context) => {
       }
     }
 
-    // 모든 시도가 실패한 경우
+    // 모든 시도가 실패하거나 응답 형식이 올바르지 않은 경우
+    console.error("Gemini Generation failed:", response ? await response.text() : "No response");
     return new Response(JSON.stringify({ 
-      error: "The AI engine is currently busy or the model is unavailable. Please try again in a few seconds." 
-    }), { status: 503 });
+      error: "The AI engine is currently busy. Please try again in a few seconds." 
+    }), { 
+      status: 503,
+      headers: { "Content-Type": "application/json" }
+    });
 
   } catch (err) {
     console.error("Internal Server Error:", err);
-    return new Response(JSON.stringify({ error: "Generation failed", detail: String(err) }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Generation failed. Please try again later." }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 };

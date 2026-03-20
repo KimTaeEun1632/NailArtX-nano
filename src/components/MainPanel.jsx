@@ -53,9 +53,8 @@ const MainPanel = ({
               </>
             )}
           </div>
-
-          <div className="flex items-center gap-4">
-          </div>        </div>
+          <div className="flex items-center gap-4"></div>{" "}
+        </div>
 
         {/* Main Generated Image Display */}
         <div className="flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white dark:border-slate-800 group bg-white dark:bg-slate-900 min-h-[300px]">
@@ -111,7 +110,9 @@ const MainPanel = ({
                   disabled={loading}
                   className="bg-primary text-white size-9 sm:size-10 rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-xl sm:text-2xl">send</span>
+                  <span className="material-symbols-outlined text-xl sm:text-2xl">
+                    send
+                  </span>
                 </button>
               </form>
             </div>
@@ -133,13 +134,17 @@ const MainPanel = ({
 
       {/* Right/Bottom: History Sidebar (Responsive) */}
       {history.length > 0 && (
-        <div className={`
+        <div
+          className={`
           flex shrink-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 p-4 transition-all
           w-full h-auto flex-row overflow-x-auto border-t gap-3
           lg:w-28 xl:w-32 lg:h-full lg:flex-col lg:overflow-y-auto lg:border-t-0 lg:border-l lg:gap-4 lg:items-center
           custom-scrollbar
-        `}>
-          <p className="hidden lg:block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">History</p>
+        `}
+        >
+          <p className="hidden lg:block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+            History
+          </p>
           {history.map((thumb, idx) => (
             <button
               key={idx}
