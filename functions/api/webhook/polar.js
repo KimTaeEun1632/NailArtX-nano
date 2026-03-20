@@ -62,7 +62,7 @@ export const onRequestPost = async (context) => {
 
     console.log(`Received Valid Polar Webhook: ${eventType}`);
 
-    const supabase = createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY);
+    const supabase = createClient(env.VITE_SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY);
 
     // 이벤트별 처리 로직
     switch (eventType) {

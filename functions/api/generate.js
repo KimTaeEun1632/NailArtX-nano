@@ -117,15 +117,16 @@ export const onRequestPost = async (context) => {
       const imagePart = parts.find((p) => p.inlineData);
 
       if (imagePart) {
-        const { data: base64, mimeType } = imagePart.inlineData;
+        const mimeType = imagePart.inlineData.mimeType || "image/png";
         const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
-        // 사용량 업데이트
-        await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+        // RLS 강화 후에는 Service Role Key로만 업데이트 가능
+        const adminClient = createClient(supabaseUrl, env.SUPABASE_SERVICE_ROLE_KEY);
+        await adminClient.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
 
         return new Response(imageBuffer, {
           headers: { 
-            "Content-Type": mimeType ?? "image/png", 
+            "Content-Type": mimeType, 
             "X-Engine": `Gemini-${finalModel}` 
           },
         });
