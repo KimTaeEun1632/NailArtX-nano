@@ -36,9 +36,19 @@ export const onRequestPost = async (context) => {
 
     const supabaseUrl = env.VITE_SUPABASE_URL;
     const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
+    const geminiKey = env.GEMINI_API_KEY;
 
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Supabase environment variables missing.");
+    if (!supabaseUrl || !supabaseKey || !geminiKey) {
+      const missing = [];
+      if (!supabaseUrl) missing.push("VITE_SUPABASE_URL");
+      if (!supabaseKey) missing.push("VITE_SUPABASE_ANON_KEY");
+      if (!geminiKey) missing.push("GEMINI_API_KEY");
+      
+      console.error("Missing Environment Variables:", missing.join(", "));
+      return new Response(JSON.stringify({ 
+        error: "Server configuration error", 
+        missing: missing 
+      }), { status: 500 });
     }
 
     const accessToken = authHeader.replace("Bearer ", "");
@@ -122,12 +132,21 @@ export const onRequestPost = async (context) => {
       const imagePart = parts.find((p) => p.inlineData);
 
       if (imagePart) {
-        const mimeType = imagePart.inlineData.mimeType || "image/png";
+        const { data: base64, mimeType } = imagePart.inlineData;
         const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
         // RLS 강화 후에는 Service Role Key로만 업데이트 가능
-        const adminClient = createClient(supabaseUrl, env.SUPABASE_SERVICE_ROLE_KEY);
-        await adminClient.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+        const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
+        if (serviceKey) {
+          try {
+            const adminClient = createClient(supabaseUrl, serviceKey);
+            await adminClient.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+          } catch (updateErr) {
+            console.error("Failed to update usage count via service role:", updateErr);
+          }
+        } else {
+          console.error("SUPABASE_SERVICE_ROLE_KEY is missing in environment variables!");
+        }
 
         return new Response(imageBuffer, {
           headers: { 
