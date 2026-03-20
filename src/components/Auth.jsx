@@ -218,7 +218,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
 
           <div className="flex justify-center py-2">
             <Turnstile
-              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+              sitekey={import.meta.env.VITE_TURNSTILE_SITE_KEY || ""}
               onVerify={(token) => setCaptchaToken(token)}
               theme="light"
             />
