@@ -3,6 +3,7 @@ import ShapeLengthSelector from "./ShapeLengthSelector";
 import ArtStyleSelector from "./ArtStyleSelector";
 import QuickStyleSelector from "./QuickStyleSelector";
 import ColorSelector from "./ColorSelector";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const Sidebar = ({
   level,
@@ -19,6 +20,7 @@ const Sidebar = ({
   setSelectedTrendColors,
   setIsSidebarOpen,
 }) => {
+  const { t } = useLanguage();
   const handleClose = () => {
     if (typeof setIsSidebarOpen === "function") {
       setIsSidebarOpen(false);
@@ -31,7 +33,7 @@ const Sidebar = ({
       <button
         onClick={handleClose}
         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 transition-colors z-50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
-        title="닫기"
+        title={t("generate.sidebar.close")}
       >
         <span className="material-symbols-outlined text-2xl">close</span>
       </button>
@@ -45,10 +47,10 @@ const Sidebar = ({
         </div>
         <div className="flex flex-col">
           <h2 className="text-lg font-bold tracking-tight text-slate-800 dark:text-white leading-tight">
-            Design Studio
+            {t("generate.sidebar.title")}
           </h2>
           <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
-            AI Generator
+            {t("generate.sidebar.subtitle")}
           </span>
         </div>
       </div>
@@ -60,14 +62,14 @@ const Sidebar = ({
             settings_input_component
           </span>
           <h3 className="font-bold text-xs uppercase tracking-widest text-slate-500">
-            Configuration
+            {t("generate.sidebar.config")}
           </h3>
         </div>
 
         {/* Quick Styles */}
         <div className="space-y-3">
           <label className="text-xs font-semibold text-slate-400">
-            STYLES & DECORATIONS
+            {t("generate.sidebar.styles")}
           </label>
           <div className="flex flex-wrap gap-2">
             <QuickStyleSelector
@@ -81,7 +83,7 @@ const Sidebar = ({
         {/* Colors */}
         <div className="space-y-3">
           <label className="text-xs font-semibold text-slate-400">
-            PALETTE
+            {t("generate.sidebar.palette")}
           </label>
           <ColorSelector
             selectedTrendColors={selectedTrendColors}
@@ -102,7 +104,7 @@ const Sidebar = ({
         {/* Art Styles */}
         <div className="space-y-3">
           <label className="text-xs font-semibold text-slate-400">
-            ARTISTIC STYLE
+            {t("generate.sidebar.artStyle")}
           </label>
           <ArtStyleSelector artStyles={artStyles} setArtStyles={setArtStyles} />
         </div>
@@ -110,7 +112,7 @@ const Sidebar = ({
         {/* Level */}
         <div className="space-y-3 pb-8">
           <label className="text-xs font-semibold text-slate-400">
-            DETAIL INTENSITY
+            {t("generate.sidebar.intensity")}
           </label>
           <LevelSelector level={level} setLevel={setLevel} />
         </div>
