@@ -36,9 +36,19 @@ export const onRequestPost = async (context) => {
 
     const supabaseUrl = env.VITE_SUPABASE_URL;
     const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
+    const geminiKey = env.GEMINI_API_KEY;
 
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Supabase environment variables missing.");
+    if (!supabaseUrl || !supabaseKey || !geminiKey) {
+      const missing = [];
+      if (!supabaseUrl) missing.push("VITE_SUPABASE_URL");
+      if (!supabaseKey) missing.push("VITE_SUPABASE_ANON_KEY");
+      if (!geminiKey) missing.push("GEMINI_API_KEY");
+      
+      console.error("Missing Environment Variables:", missing.join(", "));
+      return new Response(JSON.stringify({ 
+        error: "Server configuration error", 
+        missing: missing 
+      }), { status: 500 });
     }
 
     const accessToken = authHeader.replace("Bearer ", "");
@@ -74,6 +84,11 @@ export const onRequestPost = async (context) => {
 
     if (!prompt) {
       return new Response(JSON.stringify({ error: "Prompt is required" }), { status: 400 });
+    }
+
+    // 보안 강화: 프롬프트 길이 제한 (2000자)
+    if (prompt.length > 2000) {
+      return new Response(JSON.stringify({ error: "Prompt too long (max 2000 chars)" }), { status: 400 });
     }
 
     // 3. 모델 결정 및 검증
@@ -120,25 +135,42 @@ export const onRequestPost = async (context) => {
         const { data: base64, mimeType } = imagePart.inlineData;
         const imageBuffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 
-        // 사용량 업데이트
-        await supabase.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+        // RLS 강화 후에는 Service Role Key로만 업데이트 가능
+        const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
+        if (serviceKey) {
+          try {
+            const adminClient = createClient(supabaseUrl, serviceKey);
+            await adminClient.from("profiles").update({ usage_count: usageCount + 1 }).eq("id", user.id);
+          } catch (updateErr) {
+            console.error("Failed to update usage count via service role:", updateErr);
+          }
+        } else {
+          console.error("SUPABASE_SERVICE_ROLE_KEY is missing in environment variables!");
+        }
 
         return new Response(imageBuffer, {
           headers: { 
-            "Content-Type": mimeType ?? "image/png", 
+            "Content-Type": mimeType, 
             "X-Engine": `Gemini-${finalModel}` 
           },
         });
       }
     }
 
-    // 모든 시도가 실패한 경우
+    // 모든 시도가 실패하거나 응답 형식이 올바르지 않은 경우
+    console.error("Gemini Generation failed:", response ? await response.text() : "No response");
     return new Response(JSON.stringify({ 
-      error: "The AI engine is currently busy or the model is unavailable. Please try again in a few seconds." 
-    }), { status: 503 });
+      error: "The AI engine is currently busy. Please try again in a few seconds." 
+    }), { 
+      status: 503,
+      headers: { "Content-Type": "application/json" }
+    });
 
   } catch (err) {
     console.error("Internal Server Error:", err);
-    return new Response(JSON.stringify({ error: "Generation failed", detail: String(err) }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Generation failed. Please try again later." }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 };

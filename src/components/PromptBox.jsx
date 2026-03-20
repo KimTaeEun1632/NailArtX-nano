@@ -16,14 +16,14 @@ const PromptBox = ({
     {
       id: "gemini-2.5-flash-image",
       label: "Gemini 2.5 Flash",
-      shortLabel: "Flash",
+      shortLabel: t("generate.panel.models.flash"),
       isProOnly: false,
       icon: "⚡",
     },
     {
       id: "gemini-3-pro-image-preview",
       label: "Gemini 3 Pro",
-      shortLabel: "Pro",
+      shortLabel: t("generate.panel.models.pro"),
       isProOnly: true,
       icon: "✨",
     },
@@ -52,7 +52,7 @@ const PromptBox = ({
           <div className="flex items-center gap-4">
             {/* Model Selection Label (Optional but helps clarity) */}
             <span className="hidden sm:block text-[10px] font-black text-slate-300 dark:text-slate-700 uppercase tracking-widest">
-              Model
+              {t("generate.panel.model")}
             </span>
 
             {/* Model Selector Pill */}

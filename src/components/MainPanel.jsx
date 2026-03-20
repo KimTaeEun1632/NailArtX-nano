@@ -43,19 +43,18 @@ const MainPanel = ({
                 <button
                   onClick={() => setIsSidebarOpen(true)}
                   className="p-3 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 hover:scale-105 active:scale-95 transition-all group"
-                  title="스타일 설정 열기"
+                  title={t("generate.panel.openSidebar")}
                 >
                   <SideToggle className="w-5 h-5 text-slate-600 dark:text-slate-400 group-hover:text-primary transition-colors" />
                 </button>
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-tight hidden sm:block">
-                  Settings
+                  {t("generate.panel.settings")}
                 </span>
               </>
             )}
           </div>
-
-          <div className="flex items-center gap-4">
-          </div>        </div>
+          <div className="flex items-center gap-4"></div>{" "}
+        </div>
 
         {/* Main Generated Image Display */}
         <div className="flex-1 relative rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl border-2 sm:border-4 border-white dark:border-slate-800 group bg-white dark:bg-slate-900 min-h-[300px]">
@@ -68,10 +67,10 @@ const MainPanel = ({
                 <span className="text-3xl">🎨</span>
               </div>
               <h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight">
-                Ready to Design?
+                {t("generate.panel.readyTitle")}
               </h2>
               <p className="text-slate-500 font-medium text-sm mt-2">
-                스타일을 선택하고 생성 버튼을 눌러보세요.
+                {t("generate.panel.readySubtitle")}
               </p>
             </div>
           )}
@@ -111,7 +110,9 @@ const MainPanel = ({
                   disabled={loading}
                   className="bg-primary text-white size-9 sm:size-10 rounded-lg sm:rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg shadow-primary/20 disabled:opacity-50"
                 >
-                  <span className="material-symbols-outlined text-xl sm:text-2xl">send</span>
+                  <span className="material-symbols-outlined text-xl sm:text-2xl">
+                    send
+                  </span>
                 </button>
               </form>
             </div>
@@ -133,13 +134,17 @@ const MainPanel = ({
 
       {/* Right/Bottom: History Sidebar (Responsive) */}
       {history.length > 0 && (
-        <div className={`
+        <div
+          className={`
           flex shrink-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border-slate-200 dark:border-slate-800 p-4 transition-all
           w-full h-auto flex-row overflow-x-auto border-t gap-3
           lg:w-28 xl:w-32 lg:h-full lg:flex-col lg:overflow-y-auto lg:border-t-0 lg:border-l lg:gap-4 lg:items-center
           custom-scrollbar
-        `}>
-          <p className="hidden lg:block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">History</p>
+        `}
+        >
+          <p className="hidden lg:block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">
+            {t("generate.panel.history")}
+          </p>
           {history.map((thumb, idx) => (
             <button
               key={idx}

@@ -44,8 +44,9 @@ export async function onRequestPost(context) {
   const { error: deleteError } = await adminClient.auth.admin.deleteUser(user.id);
 
   if (deleteError) {
+    console.error("Account Delete Error:", deleteError);
     return new Response(
-      JSON.stringify({ error: deleteError.message }),
+      JSON.stringify({ error: "Failed to delete account. Please contact support." }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }

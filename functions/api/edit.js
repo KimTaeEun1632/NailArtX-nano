@@ -3,17 +3,22 @@ import { createClient } from "@supabase/supabase-js";
 // Gemini API 호출을 위한 헬퍼 함수
 async function callGemini(env, model, payload) {
   const apiVersion = "v1beta";
-  const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`;
+  const url = `https://generativelanguage.googleapis.com/${apiVersion}/models/${model}:generateContent`;
   
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { 
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": env.GEMINI_API_KEY
+    },
     body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
+    // 내부 로그에는 남기되 클라이언트에는 최소 정보만 전달
     const errorText = await response.text();
-    throw new Error(`Gemini API Error (${model}): ${errorText}`);
+    console.error(`Gemini API Error (${model}):`, errorText);
+    throw new Error(`Gemini API Error: ${response.status}`);
   }
 
   return await response.json();
@@ -22,12 +27,52 @@ async function callGemini(env, model, payload) {
 export const onRequestPost = async (context) => {
   try {
     const { request, env } = context;
-    const { userMessage, baseImage, history } = await request.json();
+    const { userMessage, baseImage } = await request.json();
 
-    // 1. Supabase 인증 확인 (생략 가능하나 보안상 유지)
-    // ... 기존 인증 로직 생략 (프로필 조회 등)
+    // 보안 강화: 입력값 검증
+    if (!userMessage || userMessage.length > 1000) {
+      return new Response(JSON.stringify({ error: "Invalid user message (max 1000 chars)" }), { status: 400 });
+    }
+    if (!baseImage || baseImage.length > 15 * 1024 * 1024) { // 약 15MB 제한
+      return new Response(JSON.stringify({ error: "Image size too large" }), { status: 400 });
+    }
 
-    // 2. Phase 1: The Brain (Gemini 2.5 Flash) - 의도 파악 및 프롬프트 생성
+    // 1. Supabase 인증 확인
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+    }
+
+    const supabaseUrl = env.VITE_SUPABASE_URL;
+    const supabaseKey = env.VITE_SUPABASE_ANON_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Missing Supabase environment variables");
+      return new Response(JSON.stringify({ error: "Server configuration error" }), { status: 500 });
+    }
+
+    const accessToken = authHeader.replace("Bearer ", "");
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: `Bearer ${accessToken}` } },
+    });
+    
+    const { data: { user }, error: authError } = await supabase.auth.getUser(accessToken);
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: "Invalid session" }), { status: 401 });
+    }
+
+    // 2. DB에서 프로필 정보 조회 (Pro 전용 기능 여부 확인)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_pro")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile || !profile.is_pro) {
+      return new Response(JSON.stringify({ error: "Pro subscription required for editing" }), { status: 403 });
+    }
+
+    // 3. Phase 1: The Brain (Gemini 2.5 Flash) - 의도 파악 및 프롬프트 생성
     const brainSystemPrompt = `
       You are the "Brain" of a professional AI Nail Art Editor. 
       Your role is to analyze user requests and translate them into precise, high-quality image editing prompts for the "Artist" model.
@@ -61,8 +106,7 @@ export const onRequestPost = async (context) => {
     const brainResult = JSON.parse(brainResponse.candidates[0].content.parts[0].text);
     const finalEditPrompt = brainResult.detailed_prompt;
 
-    // 3. Phase 2: The Artist (Gemini 2.5 Flash Image) - 이미지 수정
-    // Gemini 2.5 Flash Image는 이미지와 텍스트를 함께 받아 수정을 처리합니다.
+    // 4. Phase 2: The Artist (Gemini 2.5 Flash Image) - 이미지 수정
     const artistPayload = {
       contents: [
         {
@@ -97,10 +141,13 @@ export const onRequestPost = async (context) => {
       });
     }
 
-    throw new Error("Artist failed to generate image.");
+    throw new Error("Artist failed to generate image");
 
   } catch (err) {
     console.error("Edit API Error:", err);
-    return new Response(JSON.stringify({ error: "Editing failed", detail: String(err) }), { status: 500 });
+    return new Response(JSON.stringify({ error: "Editing failed. Please try again later." }), { 
+      status: 500,
+      headers: { "Content-Type": "application/json" }
+    });
   }
 };

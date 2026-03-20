@@ -114,6 +114,13 @@ export const translations = {
     generate: {
       sidebar: {
         title: "Design Studio",
+        subtitle: "AI Generator",
+        close: "Close",
+        config: "Configuration",
+        styles: "Styles & Decorations",
+        palette: "Palette",
+        artStyle: "Artistic Style",
+        intensity: "Detail Intensity",
         level: "Level",
         shape: "Nail Shape",
         length: "Length",
@@ -178,11 +185,22 @@ export const translations = {
       panel: {
         placeholder:
           "Describe your dream nail design (e.g., 'Pink marble with gold foil')",
+        editPlaceholder: "Ask your Design Assistant to refine this...",
         generateBtn: "Generate Design",
         proBadge: "PRO",
         freeLimit: "Free Limit",
         proLimit: "Pro Limit",
         refundBtn: "Request Refund",
+        settings: "Settings",
+        history: "History",
+        openSidebar: "Open Style Settings",
+        readyTitle: "Ready to Design?",
+        readySubtitle: "Choose your styles and hit generate to see the magic.",
+        model: "Model",
+        models: {
+          flash: "Flash",
+          pro: "Pro",
+        },
       },
       alerts: {
         paymentVerified: "Payment Verified! Welcome to NailArtX Pro.",
@@ -408,6 +426,13 @@ export const translations = {
     generate: {
       sidebar: {
         title: "디자인 스튜디오",
+        subtitle: "AI 제너레이터",
+        close: "닫기",
+        config: "상세 설정",
+        styles: "스타일 & 장식",
+        palette: "색상 팔레트",
+        artStyle: "아트 스타일",
+        intensity: "디테일 강도",
         level: "난이도",
         shape: "손톱 모양",
         length: "길이",
@@ -472,11 +497,22 @@ export const translations = {
       panel: {
         placeholder:
           "꿈꾸던 네일 디자인을 설명해주세요 (예: '금박이 들어간 핑크 대리석')",
+        editPlaceholder: "디자인 어시스턴트에게 수정을 요청하세요...",
         generateBtn: "디자인 생성하기",
         proBadge: "프로",
         freeLimit: "무료 한도",
         proLimit: "프로 한도",
         refundBtn: "환불 요청",
+        settings: "설정",
+        history: "히스토리",
+        openSidebar: "스타일 설정 열기",
+        readyTitle: "디자인할 준비가 되셨나요?",
+        readySubtitle: "스타일을 선택하고 생성 버튼을 눌러보세요.",
+        model: "모델",
+        models: {
+          flash: "플래시",
+          pro: "프로",
+        },
       },
       alerts: {
         paymentVerified:
