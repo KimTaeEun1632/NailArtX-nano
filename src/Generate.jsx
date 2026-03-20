@@ -86,8 +86,6 @@ export default function Generate() {
   // 현재 표시할 이미지 선택
   const currentImg = currentIndex >= 0 ? history[currentIndex] : null;
 
-  console.log("Generate state:", { isSidebarOpen, setIsSidebarOpenType: typeof setIsSidebarOpen });
-
   // Pro 사용자라면 기본 모델을 Pro로 설정
   useEffect(() => {
     if (isPro) {
@@ -244,18 +242,8 @@ export default function Generate() {
         });
       }
 
-      // DB 사용량 업데이트
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const newCount = usageCount + 1;
-        await supabase
-          .from("profiles")
-          .update({ usage_count: newCount })
-          .eq("id", user.id);
-        setUsageCount(newCount);
-      }
+      // 사용량 상태만 로컬에서 업데이트 (백엔드에서 이미 DB 처리 완료)
+      setUsageCount((prev) => prev + 1);
     } catch (err) {
       console.error(err);
       alert(t("generate.alerts.error"));
