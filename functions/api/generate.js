@@ -76,6 +76,11 @@ export const onRequestPost = async (context) => {
       return new Response(JSON.stringify({ error: "Prompt is required" }), { status: 400 });
     }
 
+    // 보안 강화: 프롬프트 길이 제한 (2000자)
+    if (prompt.length > 2000) {
+      return new Response(JSON.stringify({ error: "Prompt too long (max 2000 chars)" }), { status: 400 });
+    }
+
     // 3. 모델 결정 및 검증
     // Pro 모델 리스트
     const proModels = ["gemini-3-pro-image-preview"];

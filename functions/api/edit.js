@@ -29,6 +29,14 @@ export const onRequestPost = async (context) => {
     const { request, env } = context;
     const { userMessage, baseImage } = await request.json();
 
+    // 보안 강화: 입력값 검증
+    if (!userMessage || userMessage.length > 1000) {
+      return new Response(JSON.stringify({ error: "Invalid user message (max 1000 chars)" }), { status: 400 });
+    }
+    if (!baseImage || baseImage.length > 15 * 1024 * 1024) { // 약 15MB 제한
+      return new Response(JSON.stringify({ error: "Image size too large" }), { status: 400 });
+    }
+
     // 1. Supabase 인증 확인
     const authHeader = request.headers.get("Authorization");
     if (!authHeader) {
