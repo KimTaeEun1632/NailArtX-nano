@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { supabase } from "../supabase";
 import { useLanguage } from "../contexts/LanguageContext";
 import Turnstile from "react-turnstile";
@@ -8,37 +9,48 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(initialIsSignUp);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const password = watch("password");
 
   const validatePassword = (pw) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/;
-    return regex.test(pw);
+    if (!pw) return false;
+    if (pw.length < 10) return false;
+    if (!/[a-z]/.test(pw)) return false;
+    if (!/[A-Z]/.test(pw)) return false;
+    if (!/[0-9]/.test(pw)) return false;
+    if (!/[^A-Za-z0-9]/.test(pw)) return false;
+    return true;
   };
 
-  const handleAuth = async (e) => {
-    e.preventDefault();
+  const handleAuth = async (data) => {
+    setErrorMessage("");
     
     if (!isForgotPassword && !captchaToken) {
-      alert("Please complete the CAPTCHA.");
-      return;
-    }
-
-    if ((isSignUp || isForgotPassword) && !validatePassword(password)) {
-      alert(t("auth.passwordHint"));
-      return;
-    }
-
-    if (isSignUp && password !== confirmPassword) {
-      alert(t("auth.passwordMismatch"));
+      setErrorMessage("Please complete the CAPTCHA.");
       return;
     }
 
     setLoading(true);
+    const { email, password } = data;
 
     try {
       if (isForgotPassword) {
@@ -49,13 +61,26 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
         if (error) throw error;
         alert("Password reset email sent! Check your inbox.");
         setIsForgotPassword(false);
+        reset();
       } else if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ 
+        const { data, error } = await supabase.auth.signUp({ 
           email, 
           password,
           options: { captchaToken }
         });
         if (error) throw error;
+        
+        // If enumeration protection is OFF, we might get an error above.
+        // If it's ON, Supabase returns a user but with no session and identities might be empty if already exists.
+        // However, the most reliable way to show "Email already in use" is to handle the error thrown by Supabase
+        // when enumeration protection is disabled in the dashboard.
+        
+        if (data?.user && data.user.identities && data.user.identities.length === 0) {
+          setErrorMessage(t("auth.emailInUse"));
+          setLoading(false);
+          return;
+        }
+
         alert(t("auth.checkEmail"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -71,7 +96,20 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
         onClose();
       }
     } catch (error) {
-      alert(error.error_description || error.message);
+      console.error("Auth error:", error);
+      let msg = t("auth.genericError");
+      
+      if (error.message === "Invalid login credentials") {
+        msg = t("auth.invalidCredentials");
+      } else if (error.message === "User already registered") {
+        msg = t("auth.emailInUse");
+      } else if (error.status === 422 || error.message?.includes("email")) {
+        msg = t("auth.invalidEmail");
+      } else {
+        msg = error.message || t("auth.genericError");
+      }
+      
+      setErrorMessage(msg);
     } finally {
       setLoading(false);
     }
@@ -92,10 +130,23 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
       });
       if (error) throw error;
     } catch (error) {
-      alert(error.error_description || error.message);
+      setErrorMessage(error.error_description || error.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setIsForgotPassword(false);
+    setErrorMessage("");
+    reset();
+  };
+
+  const switchToForgotPassword = () => {
+    setIsForgotPassword(true);
+    setErrorMessage("");
+    reset();
   };
 
   return (
@@ -155,19 +206,28 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
           </>
         )}
 
-        <form onSubmit={handleAuth} className="space-y-4">
+        <form onSubmit={handleSubmit(handleAuth)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
               {t("auth.email")}
             </label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
+              {...register("email", { 
+                required: true,
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: t("auth.invalidEmail")
+                }
+              })}
+              className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
+                errors.email ? "border-red-500 focus:ring-red-500" : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+              }`}
               placeholder="name@email.com"
-              required
             />
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+            )}
           </div>
           
           {!isForgotPassword && (
@@ -178,14 +238,23 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
                 </label>
                 <input
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none"
+                  {...register("password", {
+                    required: true,
+                    validate: isSignUp ? validatePassword : undefined
+                  })}
+                  className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
+                    isSignUp && password && !validatePassword(password)
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+                  }`}
                   placeholder={t("auth.passwordHint")}
-                  required
                 />
                 {isSignUp && (
-                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                  <p className={`mt-1 text-[11px] ${
+                    password && !validatePassword(password)
+                      ? "text-red-500 font-medium"
+                      : "text-slate-500 dark:text-slate-400"
+                  }`}>
                     * {t("auth.passwordHint")}
                   </p>
                 )}
@@ -198,18 +267,23 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
                   </label>
                   <input
                     type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    {...register("confirmPassword", {
+                      required: isSignUp,
+                      validate: (val) => {
+                        if (isSignUp && watch("password") !== val) {
+                          return t("auth.passwordMismatch");
+                        }
+                      }
+                    })}
                     className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
-                      confirmPassword && password !== confirmPassword 
+                      errors.confirmPassword
                         ? "border-red-500 focus:ring-red-500" 
                         : "border-slate-200 dark:border-slate-800 focus:ring-primary"
                     }`}
                     placeholder={t("auth.confirmPassword")}
-                    required
                   />
-                  {confirmPassword && password !== confirmPassword && (
-                    <p className="mt-1 text-xs text-red-500">{t("auth.passwordMismatch")}</p>
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>
                   )}
                 </div>
               )}
@@ -224,7 +298,14 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
             />
           </div>
 
+          {errorMessage && (
+            <p className="text-sm text-red-500 text-center font-medium bg-red-50 dark:bg-red-900/20 py-2 rounded-lg">
+              {errorMessage}
+            </p>
+          )}
+
           <button
+            type="submit"
             disabled={loading || (!isForgotPassword && !captchaToken)}
             className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all disabled:opacity-50"
           >
@@ -241,18 +322,14 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
         <div className="mt-6 flex flex-col gap-3 text-center">
           {!isForgotPassword && !isSignUp && (
             <button
-              onClick={() => setIsForgotPassword(true)}
+              onClick={switchToForgotPassword}
               className="text-sm text-slate-500 hover:text-primary font-medium"
             >
               {t("auth.forgotPassword")}
             </button>
           )}
           <button
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setIsForgotPassword(false);
-              setConfirmPassword("");
-            }}
+            onClick={toggleMode}
             className="text-sm text-primary hover:underline font-medium"
           >
             {isForgotPassword

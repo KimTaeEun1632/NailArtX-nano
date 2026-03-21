@@ -232,6 +232,11 @@ export const translations = {
       passwordHint: "Min 10 chars, A-Z, a-z, 0-9, symbol",
       passwordMismatch: "Passwords do not match",
       checkEmail: "Check your email for confirmation!",
+      emailVerified: "Email verified successfully! You are now logged in.",
+      invalidEmail: "Invalid email address",
+      invalidCredentials: "Invalid email or password",
+      emailInUse: "Email already in use",
+      genericError: "Something went wrong. Please try again.",
     },
     footer: {
       rights: "© 2026 NailArtX. All rights reserved.",
@@ -545,6 +550,11 @@ export const translations = {
       passwordHint: "10자 이상, 대/소문자, 숫자, 특수문자 조합",
       passwordMismatch: "비밀번호가 일치하지 않습니다",
       checkEmail: "이메일을 확인하여 인증을 완료해주세요!",
+      emailVerified: "이메일 인증이 완료되었습니다! 이제 로그인되었습니다.",
+      invalidEmail: "유효하지 않은 이메일 주소입니다",
+      invalidCredentials: "이메일 또는 비밀번호가 올바르지 않습니다",
+      emailInUse: "이미 사용 중인 이메일입니다",
+      genericError: "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
     },
     footer: {
       rights: "© 2026 NailArtX. 모든 권리 보유.",

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { supabase } from "../supabase";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -7,17 +8,31 @@ const MyPage = () => {
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [updating, setUpdating] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [isPro, setIsPro] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      newPassword: "",
+      confirmPassword: "",
+    },
+  });
+
+  const newPassword = watch("newPassword");
 
   useEffect(() => {
     const checkStatus = async () => {
-      // 1. 유저 정보 가져오기
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -27,7 +42,6 @@ const MyPage = () => {
       }
       setUser(user);
 
-      // 2. Supabase DB에서 프로필 정보 가져오기
       const { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
@@ -38,7 +52,6 @@ const MyPage = () => {
         setIsPro(profile.is_pro);
         setUsageCount(profile.usage_count);
       } else if (error && error.code === "PGRST116") {
-        // 프로필이 없는 경우 (기존 유저 등) 생성 시도
         const { data: newProfile } = await supabase
           .from("profiles")
           .insert([{ id: user.id, email: user.email }])
@@ -55,34 +68,29 @@ const MyPage = () => {
     checkStatus();
   }, [navigate]);
 
-  const validatePassword = (password) => {
-    return password && password.length >= 10;
+  const validatePassword = (pw) => {
+    if (!pw) return false;
+    if (pw.length < 10) return false;
+    if (!/[a-z]/.test(pw)) return false;
+    if (!/[A-Z]/.test(pw)) return false;
+    if (!/[0-9]/.test(pw)) return false;
+    if (!/[^A-Za-z0-9]/.test(pw)) return false;
+    return true;
   };
 
-  const handleUpdatePassword = async (e) => {
-    e.preventDefault();
-
-    if (!validatePassword(newPassword)) {
-      alert(t("auth.passwordHint"));
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      alert(t("auth.passwordMismatch"));
-      return;
-    }
-
+  const handleUpdatePassword = async (data) => {
+    setErrorMessage("");
     setUpdating(true);
+    
     const { error } = await supabase.auth.updateUser({
-      password: newPassword,
+      password: data.newPassword,
     });
 
     if (error) {
-      alert(t("mypage.deleteError") + error.message);
+      setErrorMessage(t("mypage.deleteError") + error.message);
     } else {
       alert(t("mypage.successPassword"));
-      setNewPassword("");
-      setConfirmPassword("");
+      reset();
     }
     setUpdating(false);
   };
@@ -103,7 +111,6 @@ const MyPage = () => {
       }
 
       const { token } = await response.json();
-      // 유저가 제공한 실제 작동하는 URL 구조를 기반으로 생성
       const orgSlug = "kimtaeeun1632s-org";
       const portalUrl = `https://polar.sh/${orgSlug}/portal/overview?customer_session_token=${token}&email=${encodeURIComponent(user.email)}`;
 
@@ -162,16 +169,9 @@ const MyPage = () => {
     if (window.confirm(t("mypage.deleteConfirmAlert"))) {
       setUpdating(true);
       try {
-        // 1. Supabase RPC 호출하여 계정 삭제
         const { error: rpcError } = await supabase.rpc("delete_self");
+        if (rpcError) throw new Error(rpcError.message || "Failed to delete account");
 
-        if (rpcError) {
-          throw new Error(
-            rpcError.message || "Failed to delete account via RPC",
-          );
-        }
-
-        // 2. 로컬 세션 로그아웃
         await supabase.auth.signOut();
         alert(t("mypage.deleteSuccess"));
         navigate("/");
@@ -288,23 +288,32 @@ const MyPage = () => {
           <h2 className="text-xl font-bold mb-4 dark:text-slate-200">
             {t("mypage.changePassword")}
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-            {t("auth.passwordHint")}
-          </p>
-          <form onSubmit={handleUpdatePassword} className="space-y-4">
+          <form onSubmit={handleSubmit(handleUpdatePassword)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                 {t("mypage.newPassword")}
               </label>
               <input
                 type="password"
+                {...register("newPassword", {
+                  required: true,
+                  validate: validatePassword
+                })}
                 placeholder={t("auth.passwordHint")}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
                 autocomplete="new-password"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-800 dark:bg-slate-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
-                required
+                className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none transition-all ${
+                  newPassword && !validatePassword(newPassword)
+                    ? "border-red-500 focus:ring-red-500"
+                    : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+                }`}
               />
+              <p className={`mt-1 text-[11px] ${
+                newPassword && !validatePassword(newPassword)
+                  ? "text-red-500 font-medium"
+                  : "text-slate-500 dark:text-slate-400"
+              }`}>
+                * {t("auth.passwordHint")}
+              </p>
             </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
@@ -312,27 +321,33 @@ const MyPage = () => {
               </label>
               <input
                 type="password"
+                {...register("confirmPassword", {
+                  required: true,
+                  validate: (val) => val === watch("newPassword") || t("auth.passwordMismatch")
+                })}
                 placeholder={t("mypage.confirmPassword")}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
                 autocomplete="new-password"
                 className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none transition-all ${
-                  confirmPassword && newPassword !== confirmPassword
+                  errors.confirmPassword
                     ? "border-red-500 focus:ring-red-500"
                     : "border-slate-200 dark:border-slate-800 focus:ring-primary"
                 }`}
-                required
               />
-              {confirmPassword && newPassword !== confirmPassword && (
+              {errors.confirmPassword && (
                 <p className="mt-1 text-xs text-red-500">
-                  {t("auth.passwordMismatch")}
+                  {errors.confirmPassword.message}
                 </p>
               )}
             </div>
+            
+            {errorMessage && (
+              <p className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 py-2 px-3 rounded-lg">
+                {errorMessage}
+              </p>
+            )}
+
             <button
-              disabled={
-                updating || !newPassword || newPassword !== confirmPassword
-              }
+              disabled={updating || !validatePassword(newPassword) || newPassword !== watch("confirmPassword")}
               className="px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary-dark transition-all disabled:opacity-50"
             >
               {updating ? t("mypage.updating") : t("mypage.updateBtn")}
