@@ -191,6 +191,19 @@ export default function Generate() {
     try {
       setLoading(true);
 
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        alert(
+          t("auth.loginRequired") ||
+            "인증 세션이 만료되었습니다. 다시 로그인해주세요.",
+        );
+        setLoading(false);
+        return;
+      }
+
       const prompt = buildPrompt({
         keyword,
         level,
@@ -202,9 +215,6 @@ export default function Generate() {
         isPro,
       });
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
       const response = await axios.post(
         API_URL,
         { prompt, level, isPro, usageCount, model: selectedModel },
@@ -245,7 +255,23 @@ export default function Generate() {
       // 사용량 상태만 로컬에서 업데이트 (백엔드에서 이미 DB 처리 완료)
       setUsageCount((prev) => prev + 1);
     } catch (err) {
-      console.error(err);
+      console.error("Generation Error:", err);
+
+      // 서버에서 보내준 상세 에러 메시지 확인 (ArrayBuffer 처리)
+      if (err.response && err.response.data) {
+        try {
+          const decoder = new TextDecoder("utf-8");
+          const errorText = decoder.decode(err.response.data);
+          const errorJson = JSON.parse(errorText);
+          if (errorJson.error) {
+            alert(`${t("generate.alerts.error")}\n\n사유: ${errorJson.error}`);
+            return;
+          }
+        } catch (e) {
+          console.error("Failed to parse error response:", e);
+        }
+      }
+
       alert(t("generate.alerts.error"));
     } finally {
       setLoading(false);
@@ -259,7 +285,7 @@ export default function Generate() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      
+
       const response = await axios.post(
         "/api/edit",
         { userMessage, baseImage: currentImg },
@@ -268,7 +294,7 @@ export default function Generate() {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
           },
-        }
+        },
       );
 
       const blob = new Blob([response.data], {
@@ -286,7 +312,6 @@ export default function Generate() {
       const newHistory = [...history, dataUrl];
       setHistory(newHistory);
       setCurrentIndex(newHistory.length - 1);
-      
     } catch (err) {
       console.error("Edit failed", err);
       alert(t("generate.alerts.error"));
