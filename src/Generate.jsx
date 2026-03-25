@@ -264,10 +264,7 @@ export default function Generate() {
           const errorText = decoder.decode(err.response.data);
           const errorJson = JSON.parse(errorText);
           if (errorJson.error) {
-            let msg = `${t("generate.alerts.error")}\n\n사유: ${errorJson.error}`;
-            if (errorJson.detail) msg += `\n상세: ${errorJson.detail}`;
-            if (errorJson.status) msg += ` (HTTP ${errorJson.status})`;
-            alert(msg);
+            alert(`${t("generate.alerts.error")}\n\n사유: ${errorJson.error}`);
             return;
           }
         } catch (e) {
