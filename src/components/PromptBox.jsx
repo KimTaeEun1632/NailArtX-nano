@@ -14,15 +14,15 @@ const PromptBox = ({
 
   const models = [
     {
-      id: "gemini-2.0-flash",
-      label: "Gemini 2.0 Flash",
+      id: "gemini-2.5-flash-image",
+      label: "Gemini 2.5 Flash",
       shortLabel: t("generate.panel.models.flash"),
       isProOnly: false,
       icon: "⚡",
     },
     {
-      id: "gemini-2.0-flash",
-      label: "Gemini 2.0 Pro (Exp)",
+      id: "gemini-3-pro-image-preview",
+      label: "Gemini 3 Pro",
       shortLabel: t("generate.panel.models.pro"),
       isProOnly: true,
       icon: "✨",

@@ -80,16 +80,16 @@ export default function Generate() {
   const [artStyles, setArtStyles] = useState([]);
   const [selectedQuickStyles, setSelectedQuickStyles] = useState([]);
   const [selectedTrendColors, setSelectedTrendColors] = useState([]);
-  const [selectedModel, setSelectedModel] = useState("gemini-2.0-flash");
+  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-image");
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth > 1024);
 
   // 현재 표시할 이미지 선택
   const currentImg = currentIndex >= 0 ? history[currentIndex] : null;
 
-  // Pro 사용자라도 현재는 가장 성능이 좋은 2.0 모델 사용
+  // Pro 사용자라면 기본 모델을 Pro로 설정
   useEffect(() => {
     if (isPro) {
-      setSelectedModel("gemini-2.0-flash");
+      setSelectedModel("gemini-3-pro-image-preview");
     }
   }, [isPro]);
 
