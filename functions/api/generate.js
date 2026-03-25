@@ -156,13 +156,24 @@ export const onRequestPost = async (context) => {
     }
 
     // 모든 시도가 실패하거나 응답 형식이 올바르지 않은 경우
-    const errorDetail = response ? await response.text() : "No response from Gemini";
+    let errorDetail = "No response from Gemini";
+    let errorStatus = 503;
+    
+    if (response) {
+      errorStatus = response.status;
+      try {
+        errorDetail = await response.text();
+      } catch (e) {
+        errorDetail = `Could not read response text: ${e.message}`;
+      }
+    }
+    
     console.error("Gemini Generation failed:", errorDetail);
     
     return new Response(JSON.stringify({ 
       error: "The AI engine is currently busy.",
       detail: errorDetail,
-      status: response ? response.status : 503
+      status: errorStatus
     }), { 
       status: 503,
       headers: { "Content-Type": "application/json" }
