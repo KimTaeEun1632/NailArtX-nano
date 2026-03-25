@@ -102,11 +102,11 @@ export const onRequestPost = async (context) => {
       generationConfig: { responseMimeType: "application/json" }
     };
 
-    const brainResponse = await callGemini(env, "gemini-2.5-flash", brainPayload);
+    const brainResponse = await callGemini(env, "gemini-2.0-flash", brainPayload);
     const brainResult = JSON.parse(brainResponse.candidates[0].content.parts[0].text);
     const finalEditPrompt = brainResult.detailed_prompt;
 
-    // 4. Phase 2: The Artist (Gemini 2.5 Flash Image) - 이미지 수정
+    // 4. Phase 2: The Artist (Gemini 2.0 Flash) - 이미지 수정
     const artistPayload = {
       contents: [
         {
@@ -125,7 +125,7 @@ export const onRequestPost = async (context) => {
       generationConfig: { responseModalities: ["IMAGE"] }
     };
 
-    const artistResponse = await callGemini(env, "gemini-2.5-flash-image", artistPayload);
+    const artistResponse = await callGemini(env, "gemini-2.0-flash", artistPayload);
     const imagePart = artistResponse.candidates[0].content.parts.find(p => p.inlineData);
 
     if (imagePart) {

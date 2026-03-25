@@ -92,13 +92,13 @@ export const onRequestPost = async (context) => {
     }
 
     // 3. 모델 결정 및 검증
-    // Pro 모델 리스트
-    const proModels = ["gemini-3-pro-image-preview"];
-    let finalModel = requestedModel || (isPro ? "gemini-3-pro-image-preview" : "gemini-2.5-flash-image");
+    // Pro 모델 리스트 (현재는 동일한 2.0 모델 사용하되, 나중에 Pro 전용 모델 추가 가능)
+    const proModels = ["gemini-2.0-flash"];
+    let finalModel = requestedModel || "gemini-2.0-flash";
 
-    // Pro가 아닌데 Pro 모델을 요청한 경우 강제로 Flash 모델로 변경 (보안)
-    if (!isPro && proModels.includes(finalModel)) {
-      finalModel = "gemini-2.5-flash-image";
+    // 보안 강화: 프롬프트 길이 제한 (2000자)
+    if (prompt.length > 2000) {
+      return new Response(JSON.stringify({ error: "Prompt too long (max 2000 chars)" }), { status: 400 });
     }
 
     let finalPrompt = prompt;
