@@ -5,7 +5,12 @@ import { supabase } from "../supabase";
 import { useLanguage } from "../contexts/LanguageContext";
 import Turnstile from "react-turnstile";
 
-export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
+export default function Auth({
+  onClose,
+  returnUrl,
+  initialIsSignUp = false,
+  description,
+}) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -43,7 +48,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
 
   const handleAuth = async (data) => {
     setErrorMessage("");
-    
+
     if (!isForgotPassword && !captchaToken) {
       setErrorMessage("Please complete the CAPTCHA.");
       return;
@@ -63,19 +68,23 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
         setIsForgotPassword(false);
         reset();
       } else if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({ 
-          email, 
+        const { data, error } = await supabase.auth.signUp({
+          email,
           password,
-          options: { captchaToken }
+          options: { captchaToken },
         });
         if (error) throw error;
-        
+
         // If enumeration protection is OFF, we might get an error above.
         // If it's ON, Supabase returns a user but with no session and identities might be empty if already exists.
         // However, the most reliable way to show "Email already in use" is to handle the error thrown by Supabase
         // when enumeration protection is disabled in the dashboard.
-        
-        if (data?.user && data.user.identities && data.user.identities.length === 0) {
+
+        if (
+          data?.user &&
+          data.user.identities &&
+          data.user.identities.length === 0
+        ) {
           setErrorMessage(t("auth.emailInUse"));
           setLoading(false);
           return;
@@ -86,10 +95,10 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
         const { error } = await supabase.auth.signInWithPassword({
           email,
           password,
-          options: { captchaToken }
+          options: { captchaToken },
         });
         if (error) throw error;
-        
+
         if (returnUrl) {
           navigate(returnUrl);
         }
@@ -98,7 +107,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
     } catch (error) {
       console.error("Auth error:", error);
       let msg = t("auth.genericError");
-      
+
       if (error.message === "Invalid login credentials") {
         msg = t("auth.invalidCredentials");
       } else if (error.message === "User already registered") {
@@ -108,7 +117,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
       } else {
         msg = error.message || t("auth.genericError");
       }
-      
+
       setErrorMessage(msg);
     } finally {
       setLoading(false);
@@ -118,7 +127,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      const redirectTo = returnUrl 
+      const redirectTo = returnUrl
         ? `${window.location.origin}${returnUrl}`
         : window.location.origin;
 
@@ -150,7 +159,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="bg-white dark:bg-surface-dark w-full max-w-md rounded-3xl p-8 shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold dark:text-white">
@@ -167,6 +176,12 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
             ✕
           </button>
         </div>
+
+        {description && (
+          <p className="mb-6 text-sm text-primary font-medium bg-primary/5 p-4 rounded-2xl border border-primary/10 text-center">
+            {description}
+          </p>
+        )}
 
         {!isForgotPassword && (
           <>
@@ -213,23 +228,27 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
             </label>
             <input
               type="email"
-              {...register("email", { 
+              {...register("email", {
                 required: true,
                 pattern: {
                   value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: t("auth.invalidEmail")
-                }
+                  message: t("auth.invalidEmail"),
+                },
               })}
               className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
-                errors.email ? "border-red-500 focus:ring-red-500" : "border-slate-200 dark:border-slate-800 focus:ring-primary"
+                errors.email
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-slate-200 dark:border-slate-800 focus:ring-primary"
               }`}
               placeholder="name@email.com"
             />
             {errors.email && (
-              <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+              <p className="mt-1 text-xs text-red-500">
+                {errors.email.message}
+              </p>
             )}
           </div>
-          
+
           {!isForgotPassword && (
             <>
               <div>
@@ -240,7 +259,7 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
                   type="password"
                   {...register("password", {
                     required: true,
-                    validate: isSignUp ? validatePassword : undefined
+                    validate: isSignUp ? validatePassword : undefined,
                   })}
                   className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
                     isSignUp && password && !validatePassword(password)
@@ -250,11 +269,13 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
                   placeholder={t("auth.passwordHint")}
                 />
                 {isSignUp && (
-                  <p className={`mt-1 text-[11px] ${
-                    password && !validatePassword(password)
-                      ? "text-red-500 font-medium"
-                      : "text-slate-500 dark:text-slate-400"
-                  }`}>
+                  <p
+                    className={`mt-1 text-[11px] ${
+                      password && !validatePassword(password)
+                        ? "text-red-500 font-medium"
+                        : "text-slate-500 dark:text-slate-400"
+                    }`}
+                  >
                     * {t("auth.passwordHint")}
                   </p>
                 )}
@@ -273,17 +294,19 @@ export default function Auth({ onClose, returnUrl, initialIsSignUp = false }) {
                         if (isSignUp && watch("password") !== val) {
                           return t("auth.passwordMismatch");
                         }
-                      }
+                      },
                     })}
                     className={`w-full px-4 py-3 rounded-xl border dark:bg-slate-900 dark:text-white focus:ring-2 outline-none ${
                       errors.confirmPassword
-                        ? "border-red-500 focus:ring-red-500" 
+                        ? "border-red-500 focus:ring-red-500"
                         : "border-slate-200 dark:border-slate-800 focus:ring-primary"
                     }`}
                     placeholder={t("auth.confirmPassword")}
                   />
                   {errors.confirmPassword && (
-                    <p className="mt-1 text-xs text-red-500">{errors.confirmPassword.message}</p>
+                    <p className="mt-1 text-xs text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
                   )}
                 </div>
               )}

@@ -6,6 +6,7 @@ import GeneratorLayout from "./components/layout/GeneratorLayout";
 import Sidebar from "./components/Sidebar";
 import { buildPrompt } from "./utils/buildPrompt";
 import MainPanel from "./components/MainPanel";
+import Auth from "./components/Auth";
 import { useLanguage } from "./contexts/LanguageContext";
 
 const API_URL = "/api/generate";
@@ -16,26 +17,27 @@ export default function Generate() {
   const [orderId, setOrderId] = useState(null);
   const [isPro, setIsPro] = useState(false);
   const [usageCount, setUsageCount] = useState(0);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // DB에서 프로필 정보 로드
   useEffect(() => {
     const loadProfile = async () => {
       const {
-        data: { user },
+        data: { user: currentUser },
       } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!currentUser) return;
 
       let { data: profile, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", currentUser.id)
         .single();
 
       // 프로필이 없는 경우 (기존 유저 등) 생성 시도
       if (error && error.code === "PGRST116") {
         const { data: newProfile, error: insertError } = await supabase
           .from("profiles")
-          .insert([{ id: user.id, email: user.email }])
+          .insert([{ id: currentUser.id, email: currentUser.email }])
           .select()
           .single();
 
@@ -58,7 +60,7 @@ export default function Generate() {
           const { data: updatedProfile } = await supabase
             .from("profiles")
             .update({ usage_count: 0, last_reset_date: now.toISOString() })
-            .eq("id", user.id)
+            .eq("id", currentUser.id)
             .select()
             .single();
           if (updatedProfile) {
@@ -68,7 +70,7 @@ export default function Generate() {
       }
     };
     loadProfile();
-  }, []);
+  }, [t]);
 
   const [keyword, setKeyword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -189,20 +191,16 @@ export default function Generate() {
     }
 
     try {
-      setLoading(true);
-
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       if (!session) {
-        alert(
-          t("auth.loginRequired") ||
-            "인증 세션이 만료되었습니다. 다시 로그인해주세요.",
-        );
-        setLoading(false);
+        setShowAuthModal(true);
         return;
       }
+
+      setLoading(true);
 
       const prompt = buildPrompt({
         keyword,
@@ -327,48 +325,57 @@ export default function Generate() {
   };
 
   return (
-    <GeneratorLayout
-      isSidebarOpen={isSidebarOpen}
-      setIsSidebarOpen={setIsSidebarOpen}
-      sidebar={
-        <Sidebar
-          level={level}
-          setLevel={setLevel}
-          shape={shape}
-          setShape={setShape}
-          length={length}
-          setLength={setLength}
-          artStyles={artStyles}
-          setArtStyles={setArtStyles}
-          selectedQuickStyles={selectedQuickStyles}
-          setSelectedQuickStyles={setSelectedQuickStyles}
-          selectedTrendColors={selectedTrendColors}
-          setSelectedTrendColors={setSelectedTrendColors}
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isPro={isPro}
+    <>
+      <GeneratorLayout
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        sidebar={
+          <Sidebar
+            level={level}
+            setLevel={setLevel}
+            shape={shape}
+            setShape={setShape}
+            length={length}
+            setLength={setLength}
+            artStyles={artStyles}
+            setArtStyles={setArtStyles}
+            selectedQuickStyles={selectedQuickStyles}
+            setSelectedQuickStyles={setSelectedQuickStyles}
+            selectedTrendColors={selectedTrendColors}
+            setSelectedTrendColors={setSelectedTrendColors}
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+            isPro={isPro}
+          />
+        }
+        main={
+          <MainPanel
+            img={currentImg}
+            history={history}
+            currentIndex={currentIndex}
+            onSelectHistory={setCurrentIndex}
+            loading={loading}
+            keyword={keyword}
+            setKeyword={setKeyword}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+            onGenerate={generate}
+            onEdit={handleEdit}
+            onNew={handleNew}
+            isSidebarOpen={isSidebarOpen}
+            setIsSidebarOpen={setIsSidebarOpen}
+            isPro={isPro}
+            onRefund={handleRefund}
+          />
+        }
+      />
+      {showAuthModal && (
+        <Auth 
+          onClose={() => setShowAuthModal(false)} 
+          initialIsSignUp={true}
+          description={t("auth.incentive")}
         />
-      }
-      main={
-        <MainPanel
-          img={currentImg}
-          history={history}
-          currentIndex={currentIndex}
-          onSelectHistory={setCurrentIndex}
-          loading={loading}
-          keyword={keyword}
-          setKeyword={setKeyword}
-          selectedModel={selectedModel}
-          setSelectedModel={setSelectedModel}
-          onGenerate={generate}
-          onEdit={handleEdit}
-          onNew={handleNew}
-          isSidebarOpen={isSidebarOpen}
-          setIsSidebarOpen={setIsSidebarOpen}
-          isPro={isPro}
-          onRefund={handleRefund}
-        />
-      }
-    />
+      )}
+    </>
   );
 }

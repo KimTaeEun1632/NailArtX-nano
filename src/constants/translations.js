@@ -237,6 +237,7 @@ export const translations = {
       invalidCredentials: "Invalid email or password",
       emailInUse: "Email already in use",
       genericError: "Something went wrong. Please try again.",
+      incentive: "Sign up now and get 5 free design credits every month!",
     },
     footer: {
       rights: "© 2026 NailArtX. All rights reserved.",
@@ -555,6 +556,7 @@ export const translations = {
       invalidCredentials: "이메일 또는 비밀번호가 올바르지 않습니다",
       emailInUse: "이미 사용 중인 이메일입니다",
       genericError: "오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      incentive: "지금 가입하고 매월 5장의 무료 생성권을 받으세요!",
     },
     footer: {
       rights: "© 2026 NailArtX. 모든 권리 보유.",
