@@ -10,11 +10,11 @@ const GeneratorLayout = ({
         {/* Left Sidebar: Configuration */}
         <aside
           className={`
-            fixed lg:relative top-[52px] lg:top-0 left-0 h-[calc(100dvh-52px)] lg:h-full bg-white dark:bg-background-dark border-slate-200 dark:border-slate-800 transition-all duration-300 z-30 overflow-hidden shrink-0
-            ${isSidebarOpen ? "w-80 border-r translate-x-0" : "w-0 border-none -translate-x-full lg:translate-x-0"}
+            fixed lg:relative top-[52px] lg:top-0 left-0 h-[calc(100dvh-52px)] lg:h-full bg-white dark:bg-background-dark border-slate-200 dark:border-slate-800 transition-all duration-300 z-30 shrink-0
+            ${isSidebarOpen ? "w-80 border-r translate-x-0 overflow-visible" : "w-0 border-none -translate-x-full lg:translate-x-0 overflow-hidden"}
           `}
         >
-          <div className="w-80 h-full overflow-y-auto custom-scrollbar">
+          <div className="w-80 h-full overflow-y-auto overflow-x-visible custom-scrollbar">
             {sidebar}
           </div>
         </aside>

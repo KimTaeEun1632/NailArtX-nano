@@ -28,18 +28,18 @@ const Sidebar = ({
   };
 
   return (
-    <div className="p-6 h-full flex flex-col relative bg-white dark:bg-slate-900">
+    <div className="p-6 h-full flex flex-col relative bg-white dark:bg-slate-900 overflow-visible">
       {/* Sidebar Close Button (X) */}
       <button
         onClick={handleClose}
-        className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 transition-colors z-50 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
+        className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 transition-colors z-[100] rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800"
         title={t("generate.sidebar.close")}
       >
         <span className="material-symbols-outlined text-2xl">close</span>
       </button>
 
       {/* Sidebar Title / Brand */}
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex items-center gap-2 mb-8 shrink-0">
         <div className="bg-primary p-2 rounded-xl text-white shadow-lg shadow-primary/20">
           <span className="material-symbols-outlined block text-xl">
             auto_fix_high
@@ -55,8 +55,8 @@ const Sidebar = ({
         </div>
       </div>
 
-      {/* Technical Specs Only */}
-      <section className="space-y-8 flex-1 overflow-y-auto custom-scrollbar pr-1">
+      {/* Technical Specs Only - Removed overflow-y-auto to prevent clipping, now relies on parent scroll */}
+      <section className="space-y-8 flex-1 pr-1 overflow-visible">
         <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-2">
           <span className="material-symbols-outlined text-primary text-xl">
             settings_input_component
@@ -67,7 +67,7 @@ const Sidebar = ({
         </div>
 
         {/* Quick Styles */}
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-[10]">
           <label className="text-xs font-semibold text-slate-400">
             {t("generate.sidebar.styles")}
           </label>
@@ -81,7 +81,7 @@ const Sidebar = ({
         </div>
 
         {/* Colors */}
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-[20]">
           <label className="text-xs font-semibold text-slate-400">
             {t("generate.sidebar.palette")}
           </label>
@@ -92,7 +92,7 @@ const Sidebar = ({
         </div>
 
         {/* Shape & Length */}
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-[30]">
           <ShapeLengthSelector
             shape={shape}
             setShape={setShape}
@@ -102,7 +102,7 @@ const Sidebar = ({
         </div>
 
         {/* Art Styles */}
-        <div className="space-y-3">
+        <div className="space-y-3 relative z-[40]">
           <label className="text-xs font-semibold text-slate-400">
             {t("generate.sidebar.artStyle")}
           </label>
@@ -110,7 +110,7 @@ const Sidebar = ({
         </div>
 
         {/* Level */}
-        <div className="space-y-3 pb-8">
+        <div className="space-y-3 pb-8 relative z-[50]">
           <label className="text-xs font-semibold text-slate-400">
             {t("generate.sidebar.intensity")}
           </label>

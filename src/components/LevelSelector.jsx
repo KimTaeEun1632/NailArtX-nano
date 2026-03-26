@@ -58,13 +58,18 @@ const LevelSelector = ({ level, setLevel }) => {
       </div>
 
       <div className="flex gap-2">
-        {levels.map((l) => (
-          <div key={l.id} className="relative flex-1">
+        {levels.map((l, index) => (
+          <div key={l.id} className="relative flex-1 z-[50]">
             <button
               onClick={() => {
-                setLevel(l.id);
-                // 모바일에서 클릭 시 툴팁 잠시 보여주기
-                setActiveBtnTooltip(activeBtnTooltip === l.id ? null : l.id);
+                if (level === l.id) {
+                  setLevel(null);
+                  setActiveBtnTooltip(null);
+                } else {
+                  setLevel(l.id);
+                  // 모바일에서 클릭 시 툴팁 잠시 보여주기
+                  setActiveBtnTooltip(activeBtnTooltip === l.id ? null : l.id);
+                }
               }}
               onMouseEnter={() => setActiveBtnTooltip(l.id)}
               onMouseLeave={() => setActiveBtnTooltip(null)}
@@ -79,11 +84,14 @@ const LevelSelector = ({ level, setLevel }) => {
             </button>
 
             {/* 버튼 툴팁 - Hover 및 클릭 대응 */}
-            <div className={`absolute top-full left-1/2 -translate-x-1/2 mt-3 w-40 p-2.5 bg-primary dark:bg-primary text-white text-[10px] font-medium rounded-lg transition-all z-[100] shadow-xl pointer-events-none text-center leading-snug border border-white/20
-              ${activeBtnTooltip === l.id ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-[-10px] invisible"}`}
+            <div className={`absolute bottom-full mb-3 w-40 p-2.5 bg-primary dark:bg-primary text-white text-[10px] font-medium rounded-lg transition-all z-[9999] shadow-xl pointer-events-none text-center leading-snug border border-white/20
+              ${index === 0 ? "left-0" : index === levels.length - 1 ? "right-0" : "left-1/2 -translate-x-1/2"}
+              ${activeBtnTooltip === l.id ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible"}`}
             >
               {t(`generate.sidebar.tooltips.level.${l.id}`)}
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-b-primary" />
+              <div className={`absolute top-full border-[6px] border-transparent border-t-primary 
+                ${index === 0 ? "left-6" : index === levels.length - 1 ? "right-6" : "left-1/2 -translate-x-1/2"}`} 
+              />
             </div>
           </div>
         ))}

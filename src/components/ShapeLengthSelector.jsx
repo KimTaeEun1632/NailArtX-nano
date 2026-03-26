@@ -29,6 +29,14 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
   }, []);
 
   const handleShapeSelect = (shapeKey) => {
+    if (shape === shapeKey) {
+      setShape(null);
+      setLength(null);
+      setUxMessage("");
+      setActiveShapeTooltip(null);
+      return;
+    }
+
     const rule = NAIL_SPEC.shapes[shapeKey];
     setShape(shapeKey);
     setLength(rule.recommended);
@@ -46,9 +54,9 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
   };
 
   return (
-    <div ref={containerRef} className="space-y-4">
+    <div ref={containerRef} className="space-y-4 relative z-[30]">
       {/* Nail Shape */}
-      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-visible">
+      <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-visible relative z-[32]">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             {t("generate.sidebar.shape")}
@@ -104,12 +112,13 @@ const ShapeLengthSelector = ({ shape, setShape, length, setLength }) => {
 
               {/* Shape Tooltip - Mobile/Hover Compatible */}
               <div
-                className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 p-2.5 bg-primary dark:bg-primary text-white text-[10px] font-medium rounded-lg transition-all z-100 shadow-xl pointer-events-none text-center leading-snug border border-white/20
+                className={`absolute bottom-full mb-3 w-40 p-2.5 bg-primary dark:bg-primary text-white text-[10px] font-medium rounded-lg transition-all z-[9999] shadow-xl pointer-events-none text-center leading-snug border border-white/20
+                ${Object.keys(NAIL_SPEC.shapes).indexOf(key) % 2 === 0 ? "left-0" : "right-0"}
                 ${activeShapeTooltip === key ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-2 invisible"}`}
               >
                 {t(`generate.sidebar.tooltips.shape.${key.toLowerCase()}`) ||
                   t(s.label)}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-primary" />
+                <div className={`absolute top-full border-[6px] border-transparent border-t-primary ${Object.keys(NAIL_SPEC.shapes).indexOf(key) % 2 === 0 ? "left-6" : "right-6"}`} />
               </div>
             </div>
           ))}
