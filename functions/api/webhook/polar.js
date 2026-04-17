@@ -68,30 +68,31 @@ export const onRequestPost = async (context) => {
     switch (eventType) {
       case "order.paid":
       case "subscription.created":
-      case "subscription.active":
+      case "subscription.active": {
         const userId = data.metadata?.supabase_user_id || data.customer_metadata?.supabase_user_id || data.customer?.metadata?.supabase_user_id;
         const customerId = data.customer_id || data.customer?.id;
 
         if (userId) {
           const { error } = await supabase
             .from("profiles")
-            .update({ 
+            .update({
               is_pro: true,
-              polar_customer_id: customerId 
+              polar_customer_id: customerId
             })
             .eq("id", userId);
-          
+
           if (error) console.error("Webhook Update Error:", error);
         }
         break;
-
+      }
       case "subscription.revoked":
-      case "subscription.canceled":
+      case "subscription.canceled": {
         const revokedUserId = data.customer_metadata?.supabase_user_id || data.metadata?.supabase_user_id;
         if (revokedUserId) {
           await supabase.from("profiles").update({ is_pro: false }).eq("id", revokedUserId);
         }
         break;
+      }
     }
 
     return new Response(JSON.stringify({ received: true }), {
